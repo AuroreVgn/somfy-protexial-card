@@ -2,7 +2,7 @@
    Somfy Protexial Card
    ======================================================== */
 
-const CARD_VERSION = "v0.0.2";
+const CARD_VERSION = "v0.0.3";
 
 const SENSORS_DEF = [
   { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", defaultLabel: "Affiche Capteur 1", defaultText: "Batterie", type: "binary" },
