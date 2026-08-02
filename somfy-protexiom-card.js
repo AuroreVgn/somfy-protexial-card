@@ -2,7 +2,7 @@
    Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const CARD_VERSION = "v0.0.4";
+const CARD_VERSION = "v0.0.5";
 
 const SENSORS_DEF = [
   { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", defaultText: "battery", type: "binary", okState: "off" },
@@ -349,6 +349,46 @@ class SomfyProtexialCard extends HTMLElement {
     return tr(this._hass, "sinceHours", { n: value });
   }
 
+  _entityIcon(entity, sensor) {
+    if (entity?.attributes?.icon) return entity.attributes.icon;
+
+    const state = entity?.state;
+    const deviceClass = entity?.attributes?.device_class;
+    const domain = entity?.entity_id?.split(".")[0];
+
+    const deviceClassIcons = {
+      battery: state === "on" ? "mdi:battery-alert" : "mdi:battery",
+      connectivity: state === "on" ? "mdi:radio-tower" : "mdi:radio-tower-off",
+      door: state === "on" ? "mdi:door-open" : "mdi:door-closed",
+      window: state === "on" ? "mdi:window-open-variant" : "mdi:window-closed-variant",
+      motion: "mdi:motion-sensor",
+      tamper: state === "on" ? "mdi:shield-alert" : "mdi:shield-check",
+      problem: state === "on" ? "mdi:alert-circle" : "mdi:check-circle",
+      running: state === "on" ? "mdi:play-circle" : "mdi:pause-circle",
+    };
+    if (deviceClassIcons[deviceClass]) return deviceClassIcons[deviceClass];
+
+    const sensorIcons = {
+      capteur1: state === "on" ? "mdi:battery-alert" : "mdi:battery",
+      capteur2: state === "on" ? "mdi:alert-circle" : "mdi:shield-check",
+      capteur3: state === "on" ? "mdi:door-open" : "mdi:door-closed",
+      capteur4: "mdi:motion-sensor",
+      capteur5: state === "on" ? "mdi:cctv" : "mdi:cctv-off",
+      capteur6: state === "on" ? "mdi:radio-tower" : "mdi:radio-tower-off",
+      capteur7: state === "on" ? "mdi:signal" : "mdi:signal-off",
+      capteur8: "mdi:access-point-network",
+      capteur9: "mdi:signal-cellular-3",
+    };
+    if (sensorIcons[sensor?.key]) return sensorIcons[sensor.key];
+
+    const domainIcons = {
+      binary_sensor: "mdi:radiobox-marked",
+      sensor: "mdi:gauge",
+      button: "mdi:gesture-tap-button",
+    };
+    return domainIcons[domain] || "mdi:help-circle-outline";
+  }
+
   _sensorValues(sensor) {
     const entityId = this.config.entities[sensor.key] || sensor.defaultEntity;
     const entity = this._getState(entityId);
@@ -358,12 +398,13 @@ class SomfyProtexialCard extends HTMLElement {
     if (sensor.type === "binary") {
       const isOk = state === sensor.okState;
       const color = unavailable ? "var(--disabled-color)" : isOk ? "#4ade80" : "#ef4444";
-      return { entity, statusLabel, statusColor: color, dotColor: color };
+      return { entity, statusLabel, statusColor: color, dotColor: color, icon: this._entityIcon(entity, sensor) };
     }
     return {
       entity, statusLabel,
       statusColor: unavailable ? "var(--disabled-color)" : "var(--primary-text-color)",
       dotColor: unavailable ? "var(--disabled-color)" : "var(--primary-color)",
+      icon: this._entityIcon(entity, sensor),
     };
   }
 
@@ -399,6 +440,7 @@ class SomfyProtexialCard extends HTMLElement {
         .section + .section { border-top:1px solid var(--divider-color); }
         .sensor-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--divider-color); }
         .sensor-row:last-child { border-bottom:none; }
+        .sensor-icon { --mdc-icon-size:22px; color:var(--secondary-text-color); flex-shrink:0; }
         .sensor-label { flex:1; font-size:14px; color:var(--primary-text-color); }
         .sensor-status { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; text-align:right; }
         .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
@@ -430,7 +472,7 @@ class SomfyProtexialCard extends HTMLElement {
           ${activeSensors.length ? activeSensors.map(sensor => {
             const values = this._sensorValues(sensor);
             const label = this.config.labels[sensor.key] || this._formatName(values.entity, sensor.defaultText);
-            return `<div class="sensor-row" data-key="${sensor.key}"><span class="sensor-label">${label}</span><span class="sensor-status" style="color:${values.statusColor}"><span class="dot" style="background:${values.dotColor}"></span><span class="sensor-val">${values.statusLabel}</span></span></div>`;
+            return `<div class="sensor-row" data-key="${sensor.key}"><ha-icon class="sensor-icon" icon="${values.icon}"></ha-icon><span class="sensor-label">${label}</span><span class="sensor-status" style="color:${values.statusColor}"><span class="dot" style="background:${values.dotColor}"></span><span class="sensor-val">${values.statusLabel}</span></span></div>`;
           }).join("") : `<div class="no-sensors">${tr(this._hass, "noSensors")}</div>`}
         </div>
         <div class="section">
@@ -493,10 +535,12 @@ class SomfyProtexialCard extends HTMLElement {
       const dotElement = row.querySelector(".dot");
       const valueElement = row.querySelector(".sensor-val");
       const labelElement = row.querySelector(".sensor-label");
+      const iconElement = row.querySelector(".sensor-icon");
       if (statusElement) statusElement.style.color = values.statusColor;
       if (dotElement) dotElement.style.background = values.dotColor;
       if (valueElement) valueElement.textContent = values.statusLabel;
       if (labelElement && !this.config.labels[sensor.key]) labelElement.textContent = this._formatName(values.entity, sensor.defaultText);
+      if (iconElement) iconElement.setAttribute("icon", values.icon);
     });
   }
 
