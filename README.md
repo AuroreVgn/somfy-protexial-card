@@ -6,20 +6,19 @@
 
 Carte personnalisée Home Assistant pour les centrales **Somfy Protexial / Protexiom / Protexial IO**.
 
-Elle affiche en une seule carte l'état de l'alarme, les boutons de contrôle et l'état des capteurs fournis par l'intégration [somfy-protexial](https://github.com/the8tre/somfy-protexial) et son [fork](https://github.com/AuroreVgn/somfy-protexial) mis à jour avec les infos GSM.
-Elle gère la saisie du code d'armement / désarmenent depuis un popup (fonctionne depuis un navigateur sur ordinateur, téléphone et depuis l'application HA).
+Elle affiche en une seule carte l'état de l'alarme, les boutons de contrôle et l'état des capteurs fournis par l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) et de [son ancienne version](https://github.com/the8tre/somfy-protexial).
+
+Elle gère la saisie du code d'armement / désarmement depuis un popup (fonctionne depuis un navigateur sur ordinateur, téléphone et depuis l'application HA). Elle permet aussi la réinitialisation des défauts batterie, alarme et liaison.
+
+Elle est configurable via l'éditeur graphique et est compatible thèmes clair et sombre.
 
 ![Aperçu thème sombre](doc/images/dark_example.jpg)
 
 ---
 
 ## ✅ Prérequis
-
-- Home Assistant avec l'intégration [somfy-protexial](https://github.com/the8tre/somfy-protexial) installée et configurée (sans les infos liées au GSM)
-
-OU
-
-- Home Assistant avec le [fork](https://github.com/AuroreVgn/somfy-protexial) mis à jour installé et configuréee (avec les infos liées au GSM)
+- Home Assistant 2025.12 ou supérieur
+- Home Assistant avec l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) ou de [son ancienne version](https://github.com/the8tre/somfy-protexial) ou installée et configurée 
 
 Les entités suivantes doivent exister dans HA :
 
@@ -32,9 +31,12 @@ Les entités suivantes doivent exister dans HA :
 | `binary_sensor.somfy_protexial_comm_centrale_capteurs` | Communication Centrale ↔ Capteurs |
 | `binary_sensor.somfy_protexial_communication_gsm` | Communication GSM |
 | `binary_sensor.somfy_protexial_mouvement` | Détection de mouvement |
-| `sensor.somfy_protexial_operateur_gsm` | Opérateur GSM - [fork](https://github.com/AuroreVgn/somfy-protexial) uniquement |
+| `sensor.somfy_protexial_operateur_gsm` | Opérateur GSM |
 | `binary_sensor.somfy_protexial_portes_ou_fenetres` | Portes / Fenêtres |
-| `sensor.somfy_protexial_signal_gsm_5` | Signal GSM - [fork](https://github.com/AuroreVgn/somfy-protexial) uniquement|
+| `sensor.somfy_protexial_signal_gsm_5` | Signal GSM |
+| `button.reinitialiser_defaut_alarme`|  Réinitialisation des défauts d'alarmes (mouvement, ouverture, arrachement) |
+| `button.reinitialiser_defaut_liaison_radio`| Réinitialisation des défauts de lien entre la centrale et les capteurs |
+| `button.reinitialiser_defaut_piles`| Réinitialisation des défauts piles |
 
 ---
 
@@ -118,6 +120,14 @@ La carte dispose d'un **éditeur graphique intégré** : toutes les options sont
 - Capteurs de type **info** (valeur texte) :
   - Affichage de la valeur brute de l'entité avec point coloré (couleur principale du thème)
 
+### Réinitialisation des défauts
+La carte peut afficher trois boutons supplémentaires permettant d'appeler directement les boutons Home Assistant créés par l'intégration :
+
+- Réinitialisation des défauts batterie
+- Réinitialisation des défauts alarme
+- Réinitialisation des défauts liaison radio
+
+Chaque action demande une confirmation avant exécution.
 ### 🎨 Thème
 - S'adapte automatiquement au thème HA (clair / sombre) via les variables CSS natives de Home Assistant
 
@@ -142,12 +152,9 @@ La carte dispose d'un **éditeur graphique intégré** : toutes les options sont
 
 Cette carte est conçue pour fonctionner avec :
 
-SANS les informations relatives au GSM : 
-👉 [the8tre/somfy-protexial](https://github.com/the8tre/somfy-protexial) — Intégration Home Assistant pour centrale SOMFY Protexial / Protexiom / Protexial IO
+👉 [AuroreVgn/somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) — Intégration Home Assistant pour centrale SOMFY Protexial / Protexiom / Protexial IO qui sera mise à jour
 
-AVEC les informations relatives au GSM : 
-👉 [AuroreVgn/somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) — Fork mise à jour de l'intégration Home Assistant pour centrale SOMFY Protexial / Protexiom / Protexial IO
-
+👉 [the8tre/somfy-protexial](https://github.com/the8tre/somfy-protexial) — Intégration Home Assistant pour centrale SOMFY Protexial / Protexiom / Protexial IO **qui NE sera PLUS mise à jour**
 
 [releases-shield]: https://img.shields.io/github/v/release/developpeurbox/somfy-protexial-card?style=for-the-badge
 [releases]: https://github.com/developpeurbox/somfy-protexial-card/releases
