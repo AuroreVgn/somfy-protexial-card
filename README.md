@@ -2,6 +2,10 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [![Community Forum][forum-shield]][forum]
 
+# 🇬🇧 🇩🇪 🇪🇸 🇮🇹 🇳🇱 🇵🇹 Multi-languages support
+
+English | Deutsch | Español | Italiano | Nederlands | Português
+
 # 🛡️ somfy-protexial-card
 
 Carte personnalisée Home Assistant pour les centrales **Somfy Protexial / Protexiom / Protexial IO**.
@@ -12,7 +16,9 @@ Elle gère la saisie du code d'armement / désarmement depuis un popup (fonction
 
 Elle est configurable via l'éditeur graphique et est compatible thèmes clair et sombre.
 
-![Aperçu thème sombre](doc/images/dark_example.jpg)
+<p align="center">
+  <img src="doc/images/dark_example.jpg" alt="Dark theme preview" width="500">
+</p>
 
 ---
 
