@@ -19,7 +19,7 @@ const SENSORS_DEF = [
 const RESET_DEF = [
   { key: "battery", configKey: "reset_battery_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_piles", icon: "mdi:battery-sync", text: "resetBattery" },
   { key: "alarm", configKey: "reset_alarm_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_alarme", icon: "mdi:shield-refresh", text: "resetAlarm" },
-  { key: "link", configKey: "reset_link_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_liaison_radio", icon: "mdi:radio-tower", text: "resetLink" },
+  { key: "link", configKey: "reset_link_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_liaison_radio", icon: "mdi:access-point", text: "resetLink" },
 ];
 
 const TRANSLATIONS = {
