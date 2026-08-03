@@ -10,7 +10,7 @@ English | Deutsch | Español | Italiano | Nederlands | Português
 
 Carte personnalisée Home Assistant pour les centrales **Somfy Protexial / Protexiom / Protexial IO**.
 
-Elle affiche en une seule carte l'état de l'alarme, les boutons de contrôle et l'état des capteurs fournis par l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) et de [son ancienne version](https://github.com/the8tre/somfy-protexial).
+Elle affiche en une seule carte l'état de l'alarme, les boutons de contrôle et l'état des capteurs fournis par l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial).
 
 Elle gère la saisie du code d'armement / désarmement depuis un popup (fonctionne depuis un navigateur sur ordinateur, téléphone et depuis l'application HA). Elle permet aussi la réinitialisation des défauts batterie, alarme et liaison.
 
@@ -24,7 +24,7 @@ Elle est configurable via l'éditeur graphique et est compatible thèmes clair e
 
 ## ✅ Prérequis
 - Home Assistant 2025.12 ou supérieur
-- Home Assistant avec l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) ou de [son ancienne version](https://github.com/the8tre/somfy-protexial) ou installée et configurée 
+- Home Assistant avec l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) installée et configurée 
 
 Les entités suivantes doivent exister dans HA :
 
