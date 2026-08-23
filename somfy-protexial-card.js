@@ -2,15 +2,15 @@
    Somfy Protexial Card
    ======================================================== */
 
-const CARD_VERSION = "v0.0.3";
+const CARD_VERSION = "v0.0.4";
 
 const SENSORS_DEF = [
-  { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", defaultLabel: "Affiche Capteur 1", defaultText: "Batterie", type: "binary" },
-  { key: "capteur2", defaultEntity: "binary_sensor.somfy_protexial_centrale", defaultLabel: "Affiche Capteur 3", defaultText: "Centrale", type: "binary" },
+  { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", defaultLabel: "Affiche Capteur 1", defaultText: "Batterie", type: "binary", offIsOk: true },
+  { key: "capteur2", defaultEntity: "binary_sensor.somfy_protexial_centrale", defaultLabel: "Affiche Capteur 3", defaultText: "Centrale", type: "binary", offIsOk: true },
   { key: "capteur3", defaultEntity: "binary_sensor.somfy_protexial_portes_ou_fenetres", defaultLabel: "Affiche Capteur 8", defaultText: "Portes/Fenêtres", type: "binary" },
   { key: "capteur4", defaultEntity: "binary_sensor.somfy_protexial_mouvement", defaultLabel: "Affiche Capteur 6", defaultText: "Mouvement", type: "binary" },
   { key: "capteur5", defaultEntity: "binary_sensor.somfy_protexial_camera", defaultLabel: "Affiche Capteur 2", defaultText: "Caméra", type: "info" },
-  { key: "capteur6", defaultEntity: "binary_sensor.somfy_protexial_comm_centrale_capteurs", defaultLabel: "Affiche Capteur 4", defaultText: "Capteurs", type: "binary" },
+  { key: "capteur6", defaultEntity: "binary_sensor.somfy_protexial_comm_centrale_capteurs", defaultLabel: "Affiche Capteur 4", defaultText: "Capteurs", type: "binary", offIsOk: true },
   { key: "capteur7", defaultEntity: "binary_sensor.somfy_protexial_communication_gsm", defaultLabel: "Affiche Capteur 5", defaultText: "Gsm", type: "binary" },
   { key: "capteur8", defaultEntity: "sensor.somfy_protexial_operateur_gsm", defaultLabel: "Affiche Capteur 7", defaultText: "Opérateur", type: "info" },
   { key: "capteur9", defaultEntity: "sensor.somfy_protexial_signal_gsm_5", defaultLabel: "Affiche Capteur 9", defaultText: "Signal Gsm (/5)", type: "info" },
@@ -250,7 +250,22 @@ class SomfyProtexialCard extends HTMLElement {
     const state     = ent?.state ?? "unavailable";
     const isUnavail = state === "unavailable";
     let statusLabel, statusColor, dotColor;
-    if (sensor.type === "binary") {
+
+    if (sensor.type === "binary" && sensor.offIsOk) {
+      // Capteurs "problem" (batterie, centrale, comm capteurs) :
+      // off = Ok (vert), on = Défaut (rouge)
+      if (isUnavail) {
+        statusLabel = "Indisponible";
+        statusColor = "var(--disabled-color)";
+      } else if (state === "off") {
+        statusLabel = "Ok";
+        statusColor = "#4ade80";
+      } else {
+        statusLabel = "Défaut";
+        statusColor = "#ef4444";
+      }
+      dotColor = statusColor;
+    } else if (sensor.type === "binary") {
 
       const normalizedState = (state ?? "")
         .toString()
