@@ -2,7 +2,7 @@
    Somfy Protexial Card
    ======================================================== */
 
-const CARD_VERSION = "v0.0.7";
+const CARD_VERSION = "v0.0.8";
 
 const SENSORS_DEF = [
   { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", defaultLabel: "Affiche Capteur 1", defaultText: "Batterie", type: "binary", okState: "off" },
@@ -11,7 +11,7 @@ const SENSORS_DEF = [
   { key: "capteur4", defaultEntity: "binary_sensor.somfy_protexial_mouvement", defaultLabel: "Affiche Capteur 6", defaultText: "Mouvement", type: "binary" },
   { key: "capteur5", defaultEntity: "binary_sensor.somfy_protexial_camera", defaultLabel: "Affiche Capteur 2", defaultText: "Caméra", type: "info" },
   { key: "capteur6", defaultEntity: "binary_sensor.somfy_protexial_comm_centrale_capteurs", defaultLabel: "Affiche Capteur 4", defaultText: "Capteurs", type: "binary", okState: "on" },
-  { key: "capteur7", defaultEntity: "binary_sensor.somfy_protexial_communication_gsm", defaultLabel: "Affiche Capteur 5", defaultText: "Gsm", type: "binary" },
+  { key: "capteur7", defaultEntity: "binary_sensor.somfy_protexial_communication_gsm", defaultLabel: "Affiche Capteur 5", defaultText: "Gsm", type: "binary", okState: "on" },
   { key: "capteur8", defaultEntity: "sensor.somfy_protexial_operateur_gsm", defaultLabel: "Affiche Capteur 7", defaultText: "Opérateur", type: "info" },
   { key: "capteur9", defaultEntity: "sensor.somfy_protexial_signal_gsm_5", defaultLabel: "Affiche Capteur 9", defaultText: "Signal Gsm (/5)", type: "info" },
 ];
