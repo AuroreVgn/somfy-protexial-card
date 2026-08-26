@@ -1,182 +1,384 @@
 /* ========================================================
-   Somfy Protexial Card
+   Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const CARD_VERSION = "v0.0.8";
+const CARD_VERSION = "v2.1.1";
+
+const ALARM_FEATURES = {
+  ARM_HOME: 1,
+  ARM_AWAY: 2,
+  ARM_NIGHT: 4,
+};
 
 const SENSORS_DEF = [
-  { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", defaultLabel: "Affiche Capteur 1", defaultText: "Batterie", type: "binary", okState: "off" },
-  { key: "capteur2", defaultEntity: "binary_sensor.somfy_protexial_centrale", defaultLabel: "Affiche Capteur 3", defaultText: "Centrale", type: "binary", okState: "off" },
-  { key: "capteur3", defaultEntity: "binary_sensor.somfy_protexial_portes_ou_fenetres", defaultLabel: "Affiche Capteur 8", defaultText: "Portes/Fenêtres", type: "binary" },
-  { key: "capteur4", defaultEntity: "binary_sensor.somfy_protexial_mouvement", defaultLabel: "Affiche Capteur 6", defaultText: "Mouvement", type: "binary" },
-  { key: "capteur5", defaultEntity: "binary_sensor.somfy_protexial_camera", defaultLabel: "Affiche Capteur 2", defaultText: "Caméra", type: "info" },
-  { key: "capteur6", defaultEntity: "binary_sensor.somfy_protexial_comm_centrale_capteurs", defaultLabel: "Affiche Capteur 4", defaultText: "Capteurs", type: "binary", okState: "on" },
-  { key: "capteur7", defaultEntity: "binary_sensor.somfy_protexial_communication_gsm", defaultLabel: "Affiche Capteur 5", defaultText: "Gsm", type: "binary", okState: "on" },
-  { key: "capteur8", defaultEntity: "sensor.somfy_protexial_operateur_gsm", defaultLabel: "Affiche Capteur 7", defaultText: "Opérateur", type: "info" },
-  { key: "capteur9", defaultEntity: "sensor.somfy_protexial_signal_gsm_5", defaultLabel: "Affiche Capteur 9", defaultText: "Signal Gsm (/5)", type: "info" },
+  { key: "capteur1", defaultEntity: "binary_sensor.somfy_protexial_batterie", aliases: ["batterie", "battery"], defaultText: "battery", type: "binary", okState: "off" },
+  { key: "capteur2", defaultEntity: "binary_sensor.somfy_protexial_centrale", aliases: ["centrale", "control_panel"], defaultText: "controlPanel", type: "binary", okState: "off" },
+  { key: "capteur3", defaultEntity: "binary_sensor.somfy_protexial_portes_ou_fenetres", aliases: ["portes_ou_fenetres", "doors_windows", "door_window"], defaultText: "doorsWindows", type: "binary", okState: "off" },
+  { key: "capteur4", defaultEntity: "binary_sensor.somfy_protexial_mouvement", aliases: ["mouvement", "motion"], defaultText: "motion", type: "binary", okState: "off" },
+  { key: "capteur5", defaultEntity: "binary_sensor.somfy_protexial_camera", aliases: ["camera"], defaultText: "camera", type: "binary", okState: "on" },
+  { key: "capteur6", defaultEntity: "binary_sensor.somfy_protexial_comm_centrale_capteurs", aliases: ["comm_centrale_capteurs", "communication_capteurs", "sensors_communication"], defaultText: "sensors", type: "binary", okState: "on" },
+  { key: "capteur7", defaultEntity: "binary_sensor.somfy_protexial_communication_gsm", aliases: ["communication_gsm", "gsm_communication"], defaultText: "gsm", type: "binary", okState: "on" },
+  { key: "capteur8", defaultEntity: "sensor.somfy_protexial_operateur_gsm", aliases: ["operateur_gsm", "operator_gsm"], defaultText: "operator", type: "info" },
+  { key: "capteur9", defaultEntity: "sensor.somfy_protexial_signal_gsm_5", aliases: ["signal_gsm_5", "signal_gsm", "gsm_signal"], defaultText: "gsmSignal", type: "info" },
 ];
 
-// ── Editor ──────────────────────────────────────────────
+const RESET_DEF = [
+  { key: "battery", configKey: "reset_battery_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_piles", aliases: ["reinitialiser_defaut_piles", "reset_battery"], icon: "mdi:battery-sync", text: "resetBattery" },
+  { key: "alarm", configKey: "reset_alarm_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_alarme", aliases: ["reinitialiser_defaut_alarme", "reset_alarm"], icon: "mdi:shield-refresh", text: "resetAlarm" },
+  { key: "link", configKey: "reset_link_entity", defaultEntity: "button.somfy_protexial_reinitialiser_defaut_liaison_radio", aliases: ["reinitialiser_defaut_liaison_radio", "reset_radio"], icon: "mdi:access-point", text: "resetLink" },
+];
+
+const TRANSLATIONS = {
+  fr: {
+    cardSettings: "Paramètres de la carte", alarmEntity: "Entité alarme", cardTitle: "Titre de la carte",
+    entity: "Entité", displayedName: "Nom affiché", alarm: "Alarme", sensorsTitle: "État",
+    resetsTitle: "Réinitialisations", noSensors: "Aucun capteur sélectionné", disarm: "Désarmer",
+    away: "Absent", home: "Présent", night: "Nuit", confirmReset: "Confirmer la réinitialisation",
+    resetBattery: "Défauts piles", resetAlarm: "Défauts alarme", resetLink: "Liaison radio",
+    battery: "Batterie", controlPanel: "Centrale", doorsWindows: "Portes/Fenêtres", motion: "Mouvement",
+    camera: "Caméra", sensors: "Capteurs", gsm: "GSM", operator: "Opérateur", gsmSignal: "Signal GSM (/5)",
+    defaultTitle: "Somfy Protexial — Contrôle", unavailable: "Indisponible", unknown: "Inconnu",
+    lessThanMinute: "depuis moins d’une minute", sinceMinutes: "depuis {n} min", sinceHours: "depuis {n}",
+    resetBatteryEntity: "Bouton de réinitialisation des piles", resetAlarmEntity: "Bouton de réinitialisation de l’alarme",
+    resetLinkEntity: "Bouton de réinitialisation de la liaison radio", automaticDetection: "Détection automatique des entités",
+    showFaults: "Afficher les défauts", showPauses: "Afficher les équipements en pause", showLastSync: "Afficher la dernière synchronisation",
+    showRefresh: "Afficher le bouton d’actualisation", compactMode: "Mode compact", lastSyncEntity: "Entité dernière synchronisation",
+    refreshEntity: "Bouton d’actualisation", faultsTitle: "Défauts", noFaults: "Aucun défaut détecté",
+    equipmentTitle: "Équipements", paused: "En pause", active: "Actif", pause: "Pause", resume: "Réactiver",
+    lastSync: "Dernière synchronisation", refresh: "Actualiser", refreshing: "Actualisation…", connected: "Centrale connectée",
+    disconnected: "Centrale indisponible", codeTitle: "Code / PIN", codePlaceholder: "Saisir le code", cancel: "Annuler",
+    validate: "Valider", confirm: "Confirmer", actionError: "Impossible d’exécuter l’action", clickDetails: "Cliquez pour les détails",
+    settingsDisplay: "Affichage avancé"
+  },
+  en: {
+    cardSettings: "Card settings", alarmEntity: "Alarm entity", cardTitle: "Card title", entity: "Entity",
+    displayedName: "Displayed name", alarm: "Alarm", sensorsTitle: "Status", resetsTitle: "Resets",
+    noSensors: "No sensor selected", disarm: "Disarm", away: "Away", home: "Home", night: "Night",
+    confirmReset: "Confirm reset", resetBattery: "Battery faults", resetAlarm: "Alarm faults", resetLink: "Radio link",
+    battery: "Battery", controlPanel: "Control panel", doorsWindows: "Doors/Windows", motion: "Motion",
+    camera: "Camera", sensors: "Sensors", gsm: "GSM", operator: "Operator", gsmSignal: "GSM signal (/5)",
+    defaultTitle: "Somfy Protexial — Control", unavailable: "Unavailable", unknown: "Unknown",
+    lessThanMinute: "for less than a minute", sinceMinutes: "for {n} min", sinceHours: "for {n}",
+    resetBatteryEntity: "Battery reset button", resetAlarmEntity: "Alarm reset button", resetLinkEntity: "Radio-link reset button",
+    automaticDetection: "Automatic entity detection", showFaults: "Show faults", showPauses: "Show paused equipment",
+    showLastSync: "Show last synchronization", showRefresh: "Show refresh button", compactMode: "Compact mode",
+    lastSyncEntity: "Last synchronization entity", refreshEntity: "Refresh button", faultsTitle: "Faults",
+    noFaults: "No fault detected", equipmentTitle: "Equipment", paused: "Paused", active: "Active", pause: "Pause",
+    resume: "Resume", lastSync: "Last synchronization", refresh: "Refresh", refreshing: "Refreshing…",
+    connected: "Control panel connected", disconnected: "Control panel unavailable", codeTitle: "Code / PIN",
+    codePlaceholder: "Enter code", cancel: "Cancel", validate: "Validate", confirm: "Confirm",
+    actionError: "Unable to execute action", clickDetails: "Click for details", settingsDisplay: "Advanced display"
+  },
+  de: {
+    cardSettings:"Karteneinstellungen", alarmEntity:"Alarm-Entität", cardTitle:"Kartentitel", entity:"Entität", displayedName:"Angezeigter Name",
+    alarm:"Alarm", sensorsTitle:"Status", resetsTitle:"Zurücksetzen", noSensors:"Kein Sensor ausgewählt", disarm:"Unscharf",
+    away:"Abwesend", home:"Anwesend", night:"Nacht", confirmReset:"Zurücksetzen bestätigen", resetBattery:"Batteriefehler",
+    resetAlarm:"Alarmfehler", resetLink:"Funkverbindung", battery:"Batterie", controlPanel:"Zentrale", doorsWindows:"Türen/Fenster",
+    motion:"Bewegung", camera:"Kamera", sensors:"Sensoren", gsm:"GSM", operator:"Anbieter", gsmSignal:"GSM-Signal (/5)",
+    defaultTitle:"Somfy Protexial — Steuerung", unavailable:"Nicht verfügbar", unknown:"Unbekannt",
+    lessThanMinute:"seit weniger als einer Minute", sinceMinutes:"seit {n} Min.", sinceHours:"seit {n}",
+    automaticDetection:"Automatische Entitätserkennung", showFaults:"Fehler anzeigen", showPauses:"Pausierte Geräte anzeigen",
+    showLastSync:"Letzte Synchronisierung anzeigen", showRefresh:"Aktualisierungsschaltfläche anzeigen", compactMode:"Kompaktmodus",
+    lastSyncEntity:"Entität letzte Synchronisierung", refreshEntity:"Aktualisierungsschaltfläche", faultsTitle:"Fehler",
+    noFaults:"Keine Fehler erkannt", equipmentTitle:"Geräte", paused:"Pausiert", active:"Aktiv", pause:"Pausieren",
+    resume:"Reaktivieren", lastSync:"Letzte Synchronisierung", refresh:"Aktualisieren", refreshing:"Aktualisierung…",
+    connected:"Zentrale verbunden", disconnected:"Zentrale nicht verfügbar", codeTitle:"Code / PIN", codePlaceholder:"Code eingeben",
+    cancel:"Abbrechen", validate:"Bestätigen", confirm:"Bestätigen", clickDetails:"Für Details klicken", settingsDisplay:"Erweiterte Anzeige",
+    resetBatteryEntity:"Taste zum Zurücksetzen der Batteriefehler", resetAlarmEntity:"Taste zum Zurücksetzen der Alarmfehler",
+    resetLinkEntity:"Taste zum Zurücksetzen der Funkverbindung"
+  },
+  es: {
+    cardSettings:"Ajustes de la tarjeta", alarmEntity:"Entidad de alarma", cardTitle:"Título de la tarjeta", entity:"Entidad", displayedName:"Nombre mostrado",
+    alarm:"Alarma", sensorsTitle:"Estado", resetsTitle:"Restablecimientos", noSensors:"Ningún sensor seleccionado", disarm:"Desarmar",
+    away:"Ausente", home:"Presente", night:"Noche", confirmReset:"Confirmar restablecimiento", resetBattery:"Fallos de pilas",
+    resetAlarm:"Fallos de alarma", resetLink:"Enlace de radio", battery:"Pila", controlPanel:"Central", doorsWindows:"Puertas/Ventanas",
+    motion:"Movimiento", camera:"Cámara", sensors:"Sensores", gsm:"GSM", operator:"Operador", gsmSignal:"Señal GSM (/5)",
+    defaultTitle:"Somfy Protexial — Control", unavailable:"No disponible", unknown:"Desconocido",
+    lessThanMinute:"desde hace menos de un minuto", sinceMinutes:"desde hace {n} min", sinceHours:"desde hace {n}",
+    automaticDetection:"Detección automática de entidades", showFaults:"Mostrar fallos", showPauses:"Mostrar equipos en pausa",
+    showLastSync:"Mostrar última sincronización", showRefresh:"Mostrar botón de actualización", compactMode:"Modo compacto",
+    lastSyncEntity:"Entidad de última sincronización", refreshEntity:"Botón de actualización", faultsTitle:"Fallos",
+    noFaults:"No se detectaron fallos", equipmentTitle:"Equipos", paused:"En pausa", active:"Activo", pause:"Pausar",
+    resume:"Reactivar", lastSync:"Última sincronización", refresh:"Actualizar", refreshing:"Actualizando…",
+    connected:"Central conectada", disconnected:"Central no disponible", codeTitle:"Código / PIN", codePlaceholder:"Introducir código",
+    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Haz clic para ver detalles", settingsDisplay:"Visualización avanzada",
+    resetBatteryEntity:"Botón de reinicio de pilas", resetAlarmEntity:"Botón de reinicio de alarma", resetLinkEntity:"Botón de reinicio del enlace de radio"
+  },
+  it: {
+    cardSettings:"Impostazioni scheda", alarmEntity:"Entità allarme", cardTitle:"Titolo scheda", entity:"Entità", displayedName:"Nome visualizzato",
+    alarm:"Allarme", sensorsTitle:"Stato", resetsTitle:"Ripristini", noSensors:"Nessun sensore selezionato", disarm:"Disattiva",
+    away:"Assente", home:"Presente", night:"Notte", confirmReset:"Conferma ripristino", resetBattery:"Errori batterie",
+    resetAlarm:"Errori allarme", resetLink:"Collegamento radio", battery:"Batteria", controlPanel:"Centrale", doorsWindows:"Porte/Finestre",
+    motion:"Movimento", camera:"Telecamera", sensors:"Sensori", gsm:"GSM", operator:"Operatore", gsmSignal:"Segnale GSM (/5)",
+    defaultTitle:"Somfy Protexial — Controllo", unavailable:"Non disponibile", unknown:"Sconosciuto",
+    lessThanMinute:"da meno di un minuto", sinceMinutes:"da {n} min", sinceHours:"da {n}",
+    automaticDetection:"Rilevamento automatico entità", showFaults:"Mostra anomalie", showPauses:"Mostra dispositivi in pausa",
+    showLastSync:"Mostra ultima sincronizzazione", showRefresh:"Mostra pulsante aggiorna", compactMode:"Modalità compatta",
+    lastSyncEntity:"Entità ultima sincronizzazione", refreshEntity:"Pulsante aggiorna", faultsTitle:"Anomalie",
+    noFaults:"Nessuna anomalia rilevata", equipmentTitle:"Dispositivi", paused:"In pausa", active:"Attivo", pause:"Pausa",
+    resume:"Riattiva", lastSync:"Ultima sincronizzazione", refresh:"Aggiorna", refreshing:"Aggiornamento…",
+    connected:"Centrale connessa", disconnected:"Centrale non disponibile", codeTitle:"Codice / PIN", codePlaceholder:"Inserisci codice",
+    cancel:"Annulla", validate:"Conferma", confirm:"Conferma", clickDetails:"Clicca per i dettagli", settingsDisplay:"Visualizzazione avanzata",
+    resetBatteryEntity:"Pulsante ripristino batterie", resetAlarmEntity:"Pulsante ripristino allarme", resetLinkEntity:"Pulsante ripristino collegamento radio"
+  },
+  nl: {
+    cardSettings:"Kaartinstellingen", alarmEntity:"Alarmentiteit", cardTitle:"Kaarttitel", entity:"Entiteit", displayedName:"Weergavenaam",
+    alarm:"Alarm", sensorsTitle:"Status", resetsTitle:"Resetten", noSensors:"Geen sensor geselecteerd", disarm:"Uitschakelen",
+    away:"Afwezig", home:"Aanwezig", night:"Nacht", confirmReset:"Reset bevestigen", resetBattery:"Batterijfouten",
+    resetAlarm:"Alarmfouten", resetLink:"Radioverbinding", battery:"Batterij", controlPanel:"Centrale", doorsWindows:"Deuren/Ramen",
+    motion:"Beweging", camera:"Camera", sensors:"Sensoren", gsm:"GSM", operator:"Provider", gsmSignal:"GSM-signaal (/5)",
+    defaultTitle:"Somfy Protexial — Bediening", unavailable:"Niet beschikbaar", unknown:"Onbekend",
+    lessThanMinute:"sinds minder dan een minuut", sinceMinutes:"sinds {n} min", sinceHours:"sinds {n}",
+    automaticDetection:"Automatische entiteitsdetectie", showFaults:"Storingen tonen", showPauses:"Gepauzeerde apparaten tonen",
+    showLastSync:"Laatste synchronisatie tonen", showRefresh:"Vernieuwknop tonen", compactMode:"Compacte modus",
+    lastSyncEntity:"Entiteit laatste synchronisatie", refreshEntity:"Vernieuwknop", faultsTitle:"Storingen",
+    noFaults:"Geen storing gedetecteerd", equipmentTitle:"Apparaten", paused:"Gepauzeerd", active:"Actief", pause:"Pauzeren",
+    resume:"Hervatten", lastSync:"Laatste synchronisatie", refresh:"Vernieuwen", refreshing:"Vernieuwen…",
+    connected:"Centrale verbonden", disconnected:"Centrale niet beschikbaar", codeTitle:"Code / PIN", codePlaceholder:"Voer code in",
+    cancel:"Annuleren", validate:"Bevestigen", confirm:"Bevestigen", clickDetails:"Klik voor details", settingsDisplay:"Geavanceerde weergave",
+    resetBatteryEntity:"Knop batterijfouten resetten", resetAlarmEntity:"Knop alarmfouten resetten", resetLinkEntity:"Knop radioverbinding resetten"
+  },
+  pt: {
+    cardSettings:"Definições do cartão", alarmEntity:"Entidade do alarme", cardTitle:"Título do cartão", entity:"Entidade", displayedName:"Nome apresentado",
+    alarm:"Alarme", sensorsTitle:"Estado", resetsTitle:"Reposições", noSensors:"Nenhum sensor selecionado", disarm:"Desarmar",
+    away:"Ausente", home:"Presente", night:"Noite", confirmReset:"Confirmar reposição", resetBattery:"Erros das pilhas",
+    resetAlarm:"Erros do alarme", resetLink:"Ligação de rádio", battery:"Pilha", controlPanel:"Central", doorsWindows:"Portas/Janelas",
+    motion:"Movimento", camera:"Câmara", sensors:"Sensores", gsm:"GSM", operator:"Operador", gsmSignal:"Sinal GSM (/5)",
+    defaultTitle:"Somfy Protexial — Controlo", unavailable:"Indisponível", unknown:"Desconhecido",
+    lessThanMinute:"há menos de um minuto", sinceMinutes:"há {n} min", sinceHours:"há {n}",
+    automaticDetection:"Deteção automática de entidades", showFaults:"Mostrar falhas", showPauses:"Mostrar equipamentos em pausa",
+    showLastSync:"Mostrar última sincronização", showRefresh:"Mostrar botão de atualização", compactMode:"Modo compacto",
+    lastSyncEntity:"Entidade da última sincronização", refreshEntity:"Botão de atualização", faultsTitle:"Falhas",
+    noFaults:"Nenhuma falha detetada", equipmentTitle:"Equipamentos", paused:"Em pausa", active:"Ativo", pause:"Pausar",
+    resume:"Reativar", lastSync:"Última sincronização", refresh:"Atualizar", refreshing:"A atualizar…",
+    connected:"Central ligada", disconnected:"Central indisponível", codeTitle:"Código / PIN", codePlaceholder:"Introduzir código",
+    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Clique para ver detalhes", settingsDisplay:"Visualização avançada",
+    resetBatteryEntity:"Botão de reposição das pilhas", resetAlarmEntity:"Botão de reposição do alarme", resetLinkEntity:"Botão de reposição da ligação de rádio"
+  }
+};
+
+for (const lang of ["de", "es", "it", "nl", "pt"]) {
+  TRANSLATIONS[lang] = { ...TRANSLATIONS.en, ...TRANSLATIONS[lang] };
+}
+
+function languageFor(hass) {
+  const language = (hass?.locale?.language || hass?.language || navigator.language || "en").toLowerCase();
+  const short = language.split("-")[0];
+  return TRANSLATIONS[short] ? short : "en";
+}
+
+function tr(hass, key, values = {}) {
+  const lang = languageFor(hass);
+  let text = TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.en[key] ?? key;
+  Object.entries(values).forEach(([name, value]) => { text = text.replace(`{${name}}`, value); });
+  return text;
+}
+
+function fireMoreInfo(element, entityId) {
+  element.dispatchEvent(new CustomEvent("hass-more-info", {
+    detail: { entityId },
+    bubbles: true,
+    composed: true,
+  }));
+}
+
 class SomfyProtexialCardEditor extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this._hass   = null;
+    this._hass = null;
     this._config = {};
-    this._built  = false;
+    this._built = false;
   }
 
   set hass(hass) {
+    const languageChanged = this._hass && languageFor(this._hass) !== languageFor(hass);
     this._hass = hass;
-    this.shadowRoot.querySelectorAll("ha-entity-picker, ha-form")
-      .forEach(el => { el.hass = hass; });
+    if (languageChanged) {
+      this._render();
+      return;
+    }
+    this.shadowRoot.querySelectorAll("ha-form").forEach(el => { el.hass = hass; });
   }
 
   setConfig(config) {
     this._config = { ...config };
-    if (!this._built) { this._built = true; this._render(); }
+    if (!this._built) {
+      this._built = true;
+      this._render();
+    }
   }
 
-  _fireConfig(cfg) {
-    this._config = cfg;
+  _fireConfig(config) {
+    this._config = config;
     this.dispatchEvent(new CustomEvent("config-changed", {
-      detail: { config: cfg }, bubbles: true, composed: true,
+      detail: { config }, bubbles: true, composed: true,
     }));
   }
 
-  get _alarmSchema() {
-    return [{ name: "alarm_entity", selector: { entity: { domain: "alarm_control_panel" } } }];
-  }
-
-  get _titleSchema() {
-    return [{ name: "title", selector: { text: {} } }];
-  }
-
-  _sensorSchema(s) {
-    return [
-      { name: `entity_${s.key}`, selector: { entity: {} } },
-      { name: `label_${s.key}`,  selector: { text: {} } },
-    ];
-  }
-
   _render() {
-    const cfg      = this._config || {};
-    const shown    = cfg.sensors  || SENSORS_DEF.map(s => s.key);
-    const labels   = cfg.labels   || {};
+    const cfg = this._config || {};
+    const shown = [...(cfg.sensors || SENSORS_DEF.map(sensor => sensor.key))];
+    const labels = cfg.labels || {};
     const entities = cfg.entities || {};
 
     this.shadowRoot.innerHTML = `
       <style>
-        :host { display: block; font-family: var(--primary-font-family, sans-serif); }
-        ha-form { display: block; margin-bottom: 8px; }
-        ha-expansion-panel {
-          display: block; margin-bottom: 8px;
-          --expansion-panel-content-padding: 12px;
-          border-radius: 6px; --ha-card-border-radius: 6px;
-        }
-        ha-expansion-panel h3 { margin: 0; font-size: inherit; font-weight: 600; }
-        .sensor-block { border-top: 1px solid var(--divider-color); padding: 12px 0 4px; }
-        .sensor-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .sensor-name { font-size: 13px; font-weight: 600; color: var(--primary-text-color); flex: 1; }
-        input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary-color); cursor: pointer; flex-shrink: 0; }
+        :host { display:block; font-family:var(--primary-font-family, sans-serif); }
+        ha-form { display:block; margin-bottom:8px; }
+        ha-expansion-panel { display:block; margin-bottom:8px; --expansion-panel-content-padding:12px; border-radius:6px; --ha-card-border-radius:6px; }
+        ha-expansion-panel h3 { margin:0; font-size:inherit; font-weight:600; }
+        .block { border-top:1px solid var(--divider-color); padding:12px 0 4px; }
+        .header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+        .name { font-size:13px; font-weight:600; color:var(--primary-text-color); flex:1; }
+        .checks { display:grid; gap:8px; padding:8px 0; }
+        label { display:flex; align-items:center; gap:10px; font-size:14px; color:var(--primary-text-color); }
+        input[type=checkbox] { width:18px; height:18px; accent-color:var(--primary-color); cursor:pointer; flex-shrink:0; }
       </style>
-
       <ha-form id="form_alarm"></ha-form>
-
       <ha-expansion-panel outlined>
         <ha-icon slot="leading-icon" icon="mdi:cog"></ha-icon>
-        <h3 slot="header">Card settings</h3>
+        <h3 slot="header">${tr(this._hass, "cardSettings")}</h3>
         <div>
           <ha-form id="form_title"></ha-form>
+          <div class="block">
+            <div class="name">${tr(this._hass, "settingsDisplay")}</div>
+            <div class="checks" id="display_checks"></div>
+            <ha-form id="form_advanced"></ha-form>
+          </div>
           <div id="sensors_container"></div>
+          <div class="block"><ha-form id="form_resets"></ha-form></div>
         </div>
-      </ha-expansion-panel>
-    `;
+      </ha-expansion-panel>`;
 
     requestAnimationFrame(() => {
-      // ── Alarme ──
       const formAlarm = this.shadowRoot.getElementById("form_alarm");
-      formAlarm.hass   = this._hass;
-      formAlarm.schema = this._alarmSchema;
-      formAlarm.data   = { alarm_entity: cfg.alarm_entity || "alarm_control_panel.alarme" };
-      formAlarm.computeLabel = s => ({ alarm_entity: "Entité alarme" }[s.name] || s.name);
-      formAlarm.addEventListener("value-changed", e => {
-        e.stopPropagation();
-        this._fireConfig({ ...this._config, alarm_entity: e.detail.value.alarm_entity });
+      formAlarm.hass = this._hass;
+      formAlarm.schema = [{ name: "alarm_entity", selector: { entity: { domain: "alarm_control_panel" } } }];
+      formAlarm.data = { alarm_entity: cfg.alarm_entity || "alarm_control_panel.alarme" };
+      formAlarm.computeLabel = () => tr(this._hass, "alarmEntity");
+      formAlarm.addEventListener("value-changed", event => {
+        event.stopPropagation();
+        this._fireConfig({ ...this._config, alarm_entity: event.detail.value.alarm_entity });
       });
 
-      // ── Titre ──
       const formTitle = this.shadowRoot.getElementById("form_title");
-      formTitle.hass   = this._hass;
-      formTitle.schema = this._titleSchema;
-      formTitle.data   = { title: cfg.title || "Somfy Protexial — Contrôle" };
-      formTitle.computeLabel = s => ({ title: "Titre de la carte" }[s.name] || s.name);
-      formTitle.addEventListener("value-changed", e => {
-        e.stopPropagation();
-        this._fireConfig({ ...this._config, title: e.detail.value.title });
+      formTitle.hass = this._hass;
+      formTitle.schema = [{ name: "title", selector: { text: {} } }];
+      formTitle.data = { title: cfg.title || "" };
+      formTitle.computeLabel = () => tr(this._hass, "cardTitle");
+      formTitle.addEventListener("value-changed", event => {
+        event.stopPropagation();
+        this._fireConfig({ ...this._config, title: event.detail.value.title });
       });
 
-      // ── Capteurs ──
+      const checkDefs = [
+        ["auto_detect", "automaticDetection", cfg.auto_detect !== false],
+        ["show_faults", "showFaults", cfg.show_faults !== false],
+        ["show_pauses", "showPauses", cfg.show_pauses !== false],
+        ["show_last_sync", "showLastSync", cfg.show_last_sync !== false],
+        ["show_refresh", "showRefresh", cfg.show_refresh !== false],
+        ["compact", "compactMode", cfg.compact === true],
+      ];
+      const checks = this.shadowRoot.getElementById("display_checks");
+      checkDefs.forEach(([key, text, checked]) => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" data-config-key="${key}" ${checked ? "checked" : ""}>${tr(this._hass, text)}`;
+        label.querySelector("input").addEventListener("change", event => {
+          this._fireConfig({ ...this._config, [key]: event.target.checked });
+        });
+        checks.appendChild(label);
+      });
+
+      const formAdvanced = this.shadowRoot.getElementById("form_advanced");
+      formAdvanced.hass = this._hass;
+      formAdvanced.schema = [
+        { name: "last_sync_entity", selector: { entity: { domain: "sensor" } } },
+        { name: "refresh_entity", selector: { entity: { domain: "button" } } },
+      ];
+      formAdvanced.data = {
+        last_sync_entity: cfg.last_sync_entity || "",
+        refresh_entity: cfg.refresh_entity || "",
+      };
+      formAdvanced.computeLabel = field => tr(this._hass, field.name === "last_sync_entity" ? "lastSyncEntity" : "refreshEntity");
+      formAdvanced.addEventListener("value-changed", event => {
+        event.stopPropagation();
+        const values = event.detail.value || {};
+        this._fireConfig({ ...this._config, ...values });
+      });
+
       const container = this.shadowRoot.getElementById("sensors_container");
-      SENSORS_DEF.forEach(s => {
+      SENSORS_DEF.forEach(sensor => {
         const block = document.createElement("div");
-        block.className = "sensor-block";
+        block.className = "block";
         block.innerHTML = `
-          <div class="sensor-header">
-            <input type="checkbox" id="chk_${s.key}" ${shown.includes(s.key) ? "checked" : ""}>
-            <div class="sensor-name">${s.defaultLabel}</div>
+          <div class="header">
+            <input type="checkbox" id="chk_${sensor.key}" ${shown.includes(sensor.key) ? "checked" : ""}>
+            <div class="name">${tr(this._hass, sensor.defaultText)}</div>
           </div>
-          <ha-form id="form_${s.key}"></ha-form>
-        `;
+          <ha-form id="form_${sensor.key}"></ha-form>`;
         container.appendChild(block);
 
-        block.querySelector(`#chk_${s.key}`).addEventListener("change", () => {
-          const newShown = shown.includes(s.key)
-            ? shown.filter(k => k !== s.key)
-            : [...shown, s.key];
-          this._config = { ...this._config, sensors: newShown };
-          shown.length = 0; shown.push(...newShown);
-          this._fireConfig(this._config);
+        block.querySelector(`#chk_${sensor.key}`).addEventListener("change", () => {
+          const newShown = shown.includes(sensor.key) ? shown.filter(key => key !== sensor.key) : [...shown, sensor.key];
+          shown.length = 0;
+          shown.push(...newShown);
+          this._fireConfig({ ...this._config, sensors: newShown });
         });
 
-        const form = block.querySelector(`#form_${s.key}`);
-        form.hass   = this._hass;
-        form.schema = this._sensorSchema(s);
-        form.data   = {
-          [`entity_${s.key}`]: entities[s.key] || s.defaultEntity,
-          [`label_${s.key}`]:  labels[s.key]   || s.defaultText,
+        const form = block.querySelector(`#form_${sensor.key}`);
+        form.hass = this._hass;
+        form.schema = [
+          { name: `entity_${sensor.key}`, selector: { entity: {} } },
+          { name: `label_${sensor.key}`, selector: { text: {} } },
+        ];
+        form.data = {
+          [`entity_${sensor.key}`]: entities[sensor.key] || "",
+          [`label_${sensor.key}`]: labels[sensor.key] || "",
         };
-        form.computeLabel = f => ({
-          [`entity_${s.key}`]: "Entité",
-          [`label_${s.key}`]:  "Nom affiché",
-        }[f.name] || f.name);
-        form.addEventListener("value-changed", e => {
-          e.stopPropagation();
-          const val = e.detail.value;
+        form.computeLabel = field => field.name.startsWith("entity_") ? tr(this._hass, "entity") : tr(this._hass, "displayedName");
+        form.addEventListener("value-changed", event => {
+          event.stopPropagation();
+          const value = event.detail.value;
           const newEntities = { ...(this._config.entities || {}) };
-          const newLabels   = { ...(this._config.labels   || {}) };
-          const entVal = val[`entity_${s.key}`];
-          const lblVal = val[`label_${s.key}`];
-          if (entVal && entVal !== s.defaultEntity) newEntities[s.key] = entVal;
-          else delete newEntities[s.key];
-          if (lblVal && lblVal !== s.defaultText) newLabels[s.key] = lblVal;
-          else delete newLabels[s.key];
+          const newLabels = { ...(this._config.labels || {}) };
+          const entityValue = value[`entity_${sensor.key}`];
+          const labelValue = value[`label_${sensor.key}`]?.trim();
+          if (entityValue) newEntities[sensor.key] = entityValue;
+          else delete newEntities[sensor.key];
+          if (labelValue) newLabels[sensor.key] = labelValue;
+          else delete newLabels[sensor.key];
           this._fireConfig({ ...this._config, entities: newEntities, labels: newLabels });
         });
+      });
+
+      const formResets = this.shadowRoot.getElementById("form_resets");
+      formResets.hass = this._hass;
+      formResets.schema = RESET_DEF.map(reset => ({ name: reset.configKey, selector: { entity: { domain: "button" } } }));
+      formResets.data = Object.fromEntries(RESET_DEF.map(reset => [reset.configKey, cfg[reset.configKey] || ""]));
+      formResets.computeLabel = field => {
+        const reset = RESET_DEF.find(item => item.configKey === field.name);
+        return tr(this._hass, reset ? `${reset.text}Entity` : field.name);
+      };
+      formResets.addEventListener("value-changed", event => {
+        event.stopPropagation();
+        this._fireConfig({ ...this._config, ...event.detail.value });
       });
     });
   }
 }
 
-if (!customElements.get("somfy-protexial-card-editor"))
+if (!customElements.get("somfy-protexial-card-editor")) {
   customElements.define("somfy-protexial-card-editor", SomfyProtexialCardEditor);
+}
 
-// ── Card ────────────────────────────────────────────────
 class SomfyProtexialCard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
     this._rendered = false;
+    this._language = null;
+    this._refreshing = false;
   }
 
   static getConfigElement() { return document.createElement("somfy-protexial-card-editor"); }
@@ -184,33 +386,42 @@ class SomfyProtexialCard extends HTMLElement {
   static getStubConfig() {
     return {
       alarm_entity: "alarm_control_panel.alarme",
-      sensors:      SENSORS_DEF.map(s => s.key),
-      labels:       {},
-      entities:     {},
-      title:        "Somfy Protexial — Contrôle",
+      sensors: SENSORS_DEF.map(sensor => sensor.key),
+      labels: {}, entities: {}, title: "",
+      auto_detect: true, show_faults: true, show_pauses: true, show_last_sync: true, show_refresh: true, compact: false,
     };
   }
 
   setConfig(config) {
-    console.info(
-      `%c SOMFY-PROTEXIAL-CARD %c ${CARD_VERSION} `,
+    if (!config) throw new Error("Invalid configuration");
+    console.info(`%c SOMFY-PROTEXIAL-CARD %c ${CARD_VERSION} `,
       "color:#c8a96e;background:#1e1e2e;font-weight:700;padding:2px 4px;border-radius:4px 0 0 4px",
-      "color:#1e1e2e;background:#c8a96e;font-weight:700;padding:2px 4px;border-radius:0 4px 4px 0"
-    );
+      "color:#1e1e2e;background:#c8a96e;font-weight:700;padding:2px 4px;border-radius:0 4px 4px 0");
     this.config = {
       alarm_entity: config.alarm_entity || "alarm_control_panel.alarme",
-      sensors:      config.sensors      || SENSORS_DEF.map(s => s.key),
-      labels:       config.labels       || {},
-      entities:     config.entities     || {},
-      title:        config.title        || "Somfy Protexial — Contrôle",
+      sensors: config.sensors || SENSORS_DEF.map(sensor => sensor.key),
+      labels: config.labels || {},
+      entities: config.entities || {},
+      title: config.title || "",
+      auto_detect: config.auto_detect !== false,
+      show_faults: config.show_faults !== false,
+      show_pauses: config.show_pauses !== false,
+      show_last_sync: config.show_last_sync !== false,
+      show_refresh: config.show_refresh !== false,
+      compact: config.compact === true,
+      last_sync_entity: config.last_sync_entity || "",
+      refresh_entity: config.refresh_entity || "",
+      ...Object.fromEntries(RESET_DEF.map(reset => [reset.configKey, config[reset.configKey] || ""])),
+      alarm_code: config.alarm_code,
     };
-    // Si config change (ex: éditeur), forcer un re-render complet
     this._rendered = false;
   }
 
   set hass(hass) {
     this._hass = hass;
-    if (!this._rendered) {
+    const language = languageFor(hass);
+    if (!this._rendered || language !== this._language) {
+      this._language = language;
       this._rendered = true;
       this._render();
     } else {
@@ -218,280 +429,551 @@ class SomfyProtexialCard extends HTMLElement {
     }
   }
 
-  _getState(entityId) { return this._hass?.states[entityId]; }
+  _getState(entityId) { return entityId ? this._hass?.states?.[entityId] : undefined; }
 
-  _alarmLabel(state) {
-    const map = {
-      disarmed:    { label: "Désactivée",      color: "var(--secondary-text-color)" },
-      armed_away:  { label: "Armée (absent)",  color: "#206633" },
-      armed_home:  { label: "Armée (présent)", color: "#f59e0b" },
-      armed_night: { label: "Armée (nuit)",    color: "#8b5cf6" },
-      pending:     { label: "En attente…",     color: "#f59e0b" },
-      triggered:   { label: "DÉCLENCHÉE !",    color: "#ef4444" },
-      arming:      { label: "Armement…",       color: "#f59e0b" },
-      unavailable: { label: "Indisponible",    color: "var(--disabled-color)" },
+  _allSomfyEntities(domain) {
+    return Object.values(this._hass?.states || {}).filter(entity => {
+      const id = entity.entity_id.toLowerCase();
+      if (domain && !id.startsWith(`${domain}.`)) return false;
+      return id.includes("somfy_protexial") || id.includes("somfy_protexiom") ||
+        String(entity.attributes?.integration || "").toLowerCase().includes("somfy_protex");
+    });
+  }
+
+  _findByAliases(domain, aliases = []) {
+    const entities = this._allSomfyEntities(domain);
+    const lowered = aliases.map(alias => alias.toLowerCase());
+    return entities.find(entity => {
+      const haystack = `${entity.entity_id} ${entity.attributes?.friendly_name || ""}`.toLowerCase();
+      return lowered.some(alias => haystack.includes(alias));
+    })?.entity_id;
+  }
+
+  _resolveSensorEntity(sensor) {
+    const explicit = this.config.entities[sensor.key];
+    if (explicit) return explicit;
+    if (this._getState(sensor.defaultEntity)) return sensor.defaultEntity;
+    if (this.config.auto_detect) return this._findByAliases(sensor.defaultEntity.split(".")[0], sensor.aliases);
+    return sensor.defaultEntity;
+  }
+
+  _resolveReset(reset) {
+    const explicit = this.config[reset.configKey];
+    if (explicit) return explicit;
+    if (this._getState(reset.defaultEntity)) return reset.defaultEntity;
+    return this.config.auto_detect ? this._findByAliases("button", reset.aliases) : reset.defaultEntity;
+  }
+
+  _findLastSync() {
+    if (this.config.last_sync_entity) return this.config.last_sync_entity;
+    if (!this.config.auto_detect) return "";
+    return this._findByAliases("sensor", ["derniere_sync", "dernière sync", "derniere_synchronisation", "last_sync", "last update", "last_update"]);
+  }
+
+  _findRefresh() {
+    if (this.config.refresh_entity) return this.config.refresh_entity;
+    if (!this.config.auto_detect) return "";
+    return this._findByAliases("button", ["actualiser", "actualisation", "rafraichir", "rafraîchir", "refresh", "synchroniser", "synchronisation", "sync"]);
+  }
+
+  _pauseSwitches() {
+    if (!this.config.show_pauses) return [];
+    return this._allSomfyEntities("switch").filter(entity => {
+      const haystack = `${entity.entity_id} ${entity.attributes?.friendly_name || ""}`.toLowerCase();
+      return haystack.includes("pause") || haystack.includes("(pause)") || haystack.includes("paused");
+    });
+  }
+
+  _faultEntities() {
+    if (!this.config.show_faults) return [];
+
+    const ignored = new Set(
+      SENSORS_DEF.map(sensor => this._resolveSensorEntity(sensor)).filter(Boolean)
+    );
+
+    const normalLabels = new Set([
+      "ok", "normal", "connected", "connecté", "connectee", "connectée",
+      "fermé", "fermée", "fermés", "fermées", "closed",
+      "non détecté", "non detecte", "not detected"
+    ]);
+
+    return this._allSomfyEntities("binary_sensor").filter(entity => {
+      if (ignored.has(entity.entity_id)) return false;
+      if (["unknown", "unavailable"].includes(entity.state)) return false;
+
+      const dc = entity.attributes?.device_class || "";
+      const haystack = `${entity.entity_id} ${entity.attributes?.friendly_name || ""}`.toLowerCase();
+      const formatted = this._formatState(entity).trim().toLowerCase();
+
+      // Never report an entity explicitly formatted by HA/integration as healthy.
+      if (normalLabels.has(formatted)) return false;
+
+      const isConnectivity =
+        dc === "connectivity" ||
+        ["communication", "comm ", "radio", "liaison", "link"].some(token => haystack.includes(token));
+
+      // Somfy connectivity entities use ON for a healthy link and OFF for a fault.
+      if (isConnectivity) return entity.state === "off";
+
+      const isDiagnostic =
+        ["battery", "problem", "tamper", "door", "window", "motion", "safety"].includes(dc) ||
+        ["defaut", "défaut", "problem", "batter", "arrachement", "tamper", "ouverture", "alarm"]
+          .some(token => haystack.includes(token));
+
+      // Other binary diagnostic entities follow the usual HA convention:
+      // ON = active problem, OFF = normal.
+      return isDiagnostic && entity.state === "on";
+    });
+  }
+
+  _formatState(entity) {
+    if (!entity) return tr(this._hass, "unavailable");
+    if (entity.state === "unavailable") return tr(this._hass, "unavailable");
+    if (entity.state === "unknown") return tr(this._hass, "unknown");
+    try { return this._hass.formatEntityState(entity); } catch (_) { return entity.state; }
+  }
+
+  _formatName(entity, fallbackKey) {
+    if (entity) {
+      try { return this._hass.formatEntityName(entity); } catch (_) {}
+      if (entity.attributes?.friendly_name) return entity.attributes.friendly_name;
+    }
+    return tr(this._hass, fallbackKey);
+  }
+
+  _alarmValues() {
+    const entity = this._getState(this.config.alarm_entity);
+    const state = entity?.state ?? "unavailable";
+    const colors = {
+      disarmed: "var(--secondary-text-color)", armed_away: "#206633", armed_home: "#f59e0b",
+      armed_night: "#8b5cf6", pending: "#f59e0b", arming: "#f59e0b", triggered: "#ef4444",
+      unavailable: "var(--disabled-color)", unknown: "var(--disabled-color)",
     };
-    return map[state] || { label: state, color: "var(--secondary-text-color)" };
+    return { label: this._formatState(entity), color: colors[state] || "var(--secondary-text-color)", state, entity };
   }
 
   _sinceLabel(entityId) {
-    const ent = this._getState(entityId);
-    if (!ent?.last_changed) return "";
-    const diffMin = Math.floor((new Date() - new Date(ent.last_changed)) / 60000);
-    if (diffMin < 1) return "depuis moins d'une minute";
-    if (diffMin < 60) return `depuis ${diffMin} min`;
-    const h = Math.floor(diffMin / 60), m = diffMin % 60;
-    return m === 0 ? `depuis ${h}h` : `depuis ${h}h${String(m).padStart(2, "0")}`;
+    const entity = this._getState(entityId);
+    if (!entity?.last_changed) return "";
+    return this._relativeTime(entity.last_changed);
+  }
+
+  _relativeTime(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value || "");
+    const diffMin = Math.max(0, Math.floor((Date.now() - date.getTime()) / 60000));
+    if (diffMin < 1) return tr(this._hass, "lessThanMinute");
+    if (diffMin < 60) return tr(this._hass, "sinceMinutes", { n: diffMin });
+    const hours = Math.floor(diffMin / 60), minutes = diffMin % 60;
+    const text = minutes === 0 ? `${hours}h` : `${hours}h${String(minutes).padStart(2, "0")}`;
+    return tr(this._hass, "sinceHours", { n: text });
+  }
+
+  _entityIcon(entity, sensor) {
+    if (entity?.attributes?.icon) return entity.attributes.icon;
+    const state = entity?.state;
+    const dc = entity?.attributes?.device_class;
+    const icons = {
+      battery: state === "on" ? "mdi:battery-alert" : "mdi:battery",
+      connectivity: state === "on" ? "mdi:lan-disconnect" : "mdi:lan-connect",
+      door: state === "on" ? "mdi:door-open" : "mdi:door-closed",
+      window: state === "on" ? "mdi:window-open-variant" : "mdi:window-closed-variant",
+      motion: state === "on" ? "mdi:motion-sensor" : "mdi:motion-sensor-off",
+      tamper: state === "on" ? "mdi:shield-alert" : "mdi:shield-check",
+      problem: state === "on" ? "mdi:alert-circle" : "mdi:check-circle",
+    };
+    if (icons[dc]) return icons[dc];
+    const fallback = {
+      capteur1: state === "on" ? "mdi:battery-alert" : "mdi:battery",
+      capteur2: state === "on" ? "mdi:alert-circle" : "mdi:shield-check",
+      capteur3: state === "on" ? "mdi:door-open" : "mdi:door-closed",
+      capteur4: state === "on" ? "mdi:motion-sensor" : "mdi:motion-sensor-off",
+      capteur5: state === "on" ? "mdi:cctv" : "mdi:cctv-off",
+      capteur6: state === "on" ? "mdi:radio-tower" : "mdi:radio-tower-off",
+      capteur7: state === "on" ? "mdi:signal" : "mdi:signal-off",
+      capteur8: "mdi:access-point-network",
+      capteur9: "mdi:signal-cellular-3",
+    };
+    return fallback[sensor?.key] || "mdi:alert-circle-outline";
   }
 
   _sensorValues(sensor) {
-    const entityId  = this.config.entities[sensor.key] || sensor.defaultEntity;
-    const ent       = this._getState(entityId);
-    const state     = ent?.state ?? "unavailable";
-    const isUnavail = state === "unavailable";
-    let statusLabel, statusColor, dotColor;
-
-    if (sensor.type === "binary" && sensor.okState) {
-      // Capteurs on/off où l'état "bon" est explicite (batterie, centrale : off=Ok ; comm capteurs : on=Ok)
-      if (isUnavail) {
-        statusLabel = "Indisponible";
-        statusColor = "var(--disabled-color)";
-      } else if (state === sensor.okState) {
-        statusLabel = "Ok";
-        statusColor = "#4ade80";
-      } else {
-        statusLabel = "Défaut";
-        statusColor = "#ef4444";
-      }
-      dotColor = statusColor;
-    } else if (sensor.type === "binary") {
-
-      const normalizedState = (state ?? "")
-        .toString()
-        .normalize("NFKC")
-        .trim();
-
-      const okStates = [
-        "non détecté",
-        "Non détecté",
-        "fermées",
-        "Fermées",
-        "ok",
-        "OK",
-        "Ok"
-      ].map(s =>
-            s.toString().normalize("NFKC").trim()
-      );
-
-const isOk = okStates.includes(normalizedState);
-
-      statusLabel = isUnavail ? "Indisponible" : state;
-      statusColor = isUnavail ? "var(--disabled-color)" : isOk ? "#4ade80" : "#ef4444";
-      dotColor    = statusColor;
-    } else {
-      statusLabel = isUnavail ? "Indisponible" : state;
-      statusColor = isUnavail ? "var(--disabled-color)" : "var(--primary-text-color)";
-      dotColor    = isUnavail ? "var(--disabled-color)" : "var(--primary-color)";
+    const entityId = this._resolveSensorEntity(sensor);
+    const entity = this._getState(entityId);
+    const state = entity?.state ?? "unavailable";
+    const unavailable = ["unavailable", "unknown"].includes(state);
+    const statusLabel = this._formatState(entity);
+    if (sensor.type === "binary") {
+      const isOk = state === sensor.okState;
+      const color = unavailable ? "var(--disabled-color)" : isOk ? "#22c55e" : "#ef4444";
+      return { entityId, entity, statusLabel, statusColor: color, dotColor: color, icon: this._entityIcon(entity, sensor) };
     }
-    return { statusLabel, statusColor, dotColor };
+    return {
+      entityId, entity, statusLabel,
+      statusColor: unavailable ? "var(--disabled-color)" : "var(--primary-text-color)",
+      dotColor: unavailable ? "var(--disabled-color)" : "var(--primary-color)",
+      icon: this._entityIcon(entity, sensor),
+    };
   }
 
-  // ── Premier rendu complet ────────────────────────────
+  _supportedAlarmActions() {
+    const entity = this._getState(this.config.alarm_entity);
+    const features = Number(entity?.attributes?.supported_features || 0);
+    const actions = [{ key: "disarm", label: "disarm", cls: "btn-disarm", icon: "mdi:lock-open-variant" }];
+    if (!features || (features & ALARM_FEATURES.ARM_HOME)) actions.push({ key: "arm_home", label: "home", cls: "btn-arm-home", icon: "mdi:home-lock" });
+    if (!features || (features & ALARM_FEATURES.ARM_AWAY)) actions.push({ key: "arm_away", label: "away", cls: "btn-arm-away", icon: "mdi:shield-lock" });
+    if (features & ALARM_FEATURES.ARM_NIGHT) actions.push({ key: "arm_night", label: "night", cls: "btn-arm-night", icon: "mdi:weather-night" });
+    return actions;
+  }
+
+  _connectionOk() {
+    const alarm = this._getState(this.config.alarm_entity);
+    return alarm && !["unavailable", "unknown"].includes(alarm.state);
+  }
+
+  _lastSyncText() {
+    const entityId = this._findLastSync();
+    const entity = this._getState(entityId);
+    if (!entity) return "";
+    const raw = entity.state;
+    if (!raw || ["unknown", "unavailable"].includes(raw)) return this._formatState(entity);
+    return this._relativeTime(raw);
+  }
+
   _render() {
     if (!this._hass) return;
-
-    const alarmEnt    = this._getState(this.config.alarm_entity);
-    const alarmState  = alarmEnt?.state ?? "unavailable";
-    const { label: alarmLabel, color: alarmColor } = this._alarmLabel(alarmState);
-    const isArmed     = !["disarmed", "unavailable"].includes(alarmState);
-    const isTriggered = alarmState === "triggered";
-    const sinceLabel  = this._sinceLabel(this.config.alarm_entity);
-    const activeSensors = SENSORS_DEF.filter(s => this.config.sensors.includes(s.key));
-
-    const iconAlarm = `<svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>`;
-    const iconLock  = `<svg class="ei" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+    const alarm = this._alarmValues();
+    const isArmed = !["disarmed", "unavailable", "unknown"].includes(alarm.state);
+    const activeSensors = SENSORS_DEF.filter(sensor => this.config.sensors.includes(sensor.key));
+    const resets = RESET_DEF.map(reset => ({ ...reset, entityId: this._resolveReset(reset) })).filter(reset => this._getState(reset.entityId));
+    const faultEntities = this._faultEntities();
+    const pauses = this._pauseSwitches();
+    const refreshEntity = this._findRefresh();
+    const lastSyncText = this._lastSyncText();
+    const connectionOk = this._connectionOk();
+    const alarmActions = this._supportedAlarmActions();
 
     this.shadowRoot.innerHTML = `
       <style>
-        :host { display: block; font-family: var(--primary-font-family, sans-serif); }
-        .card {
-          background: var(--ha-card-background, var(--card-background-color));
-          border-radius: var(--ha-card-border-radius, 12px); overflow: hidden;
-          border: 1px solid var(--divider-color); box-shadow: var(--ha-card-box-shadow, none);
-        }
-        .alarm-section { padding: 16px; background: var(--secondary-background-color); border-bottom: 1px solid var(--divider-color); }
-        .section-title { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--secondary-text-color); margin-bottom: 14px; }
-        .alarm-row { display: flex; align-items: center; gap: 14px; }
-        .alarm-icon-wrap {
-          width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-          border-radius: 12px; background: var(--primary-background-color); flex-shrink: 0;
-        }
-        .alarm-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-        .alarm-name { font-size: 15px; font-weight: 600; color: var(--primary-text-color); }
-        .alarm-state-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-        .alarm-state { font-size: 13px; }
-        .alarm-since { font-size: 11px; color: var(--secondary-text-color); font-style: italic; }
-        .alarm-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .btn {
-          height: 36px; width: 110px; padding: 0 10px; margin: 0;
-          border-radius: 8px; border: none; box-sizing: border-box;
-          font-family: var(--primary-font-family, sans-serif); font-size: 12px; font-weight: 600;
-          cursor: pointer; display: flex; align-items: center; justify-content: center;
-          gap: 6px; transition: opacity 0.2s, transform 0.1s; white-space: nowrap;
-          -webkit-appearance: none; appearance: none;
-        }
-        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
-        .btn:active { transform: translateY(0); }
-        .ei { width: 16px; height: 16px; flex-shrink: 0; }
-        .btn-disarm   { background: #4b5563; color: #fff; }
-        .btn-arm-away { background: #206633; color: #fff; }
-        .sensors-section { padding: 16px; background: var(--ha-card-background, var(--card-background-color)); }
-        .sensor-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--divider-color); }
-        .sensor-row:last-child { border-bottom: none; }
-        .sensor-label { flex: 1; font-size: 14px; color: var(--primary-text-color); }
-        .sensor-status { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
-        .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-        .no-sensors { font-size: 13px; color: var(--secondary-text-color); padding: 8px 0; text-align: center; }
-        .card-version { font-size: 10px; color: var(--disabled-color); text-align: right; padding: 6px 16px 8px; border-top: 1px solid var(--divider-color); letter-spacing: 0.5px; }
+        :host { display:block; font-family:var(--primary-font-family, sans-serif); }
+        .card { background:var(--ha-card-background, var(--card-background-color)); border-radius:var(--ha-card-border-radius, 12px); overflow:hidden; border:1px solid var(--divider-color); box-shadow:var(--ha-card-box-shadow, none); }
+        .alarm-section { padding:${this.config.compact ? "12px" : "16px"}; background:var(--secondary-background-color); border-bottom:1px solid var(--divider-color); }
+        .topline { display:flex; align-items:center; gap:8px; margin-bottom:${this.config.compact ? "8px" : "14px"}; }
+        .section-title { flex:1; font-size:11px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--secondary-text-color); }
+        .connection { display:flex; align-items:center; justify-content:flex-end; gap:5px; font-size:11px; color:var(--secondary-text-color); white-space:nowrap; }
+        .connection-dot { width:7px; height:7px; border-radius:50%; background:${connectionOk ? "#22c55e" : "#ef4444"}; }
+        .refresh-zone { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+        .status-sync-stack { display:flex; flex-direction:column; align-items:flex-end; gap:2px; min-width:0; }
+        .refresh-sync { display:flex; flex-direction:column; align-items:flex-end; gap:1px; min-width:0; }
+        .refresh-sync-label { font-size:9px; line-height:1.15; color:var(--secondary-text-color); white-space:nowrap; }
+        .refresh-sync-value { font-size:10px; line-height:1.2; color:var(--primary-text-color); white-space:nowrap; font-weight:600; }
+        .refresh-icon-btn { width:32px; height:32px; border:0; border-radius:50%; display:flex; align-items:center; justify-content:center; background:transparent; color:var(--primary-text-color); cursor:pointer; flex-shrink:0; }
+        .refresh-icon-btn:hover { background:var(--secondary-background-color); }
+        .refresh-icon-btn[disabled] { opacity:.5; cursor:default; }
+        .spin { animation:spin 1s linear infinite; } @keyframes spin { to { transform:rotate(360deg); } }
+        .alarm-row { display:flex; align-items:center; gap:14px; }
+        .alarm-icon-wrap { width:${this.config.compact ? "42px" : "48px"}; height:${this.config.compact ? "42px" : "48px"}; display:flex; align-items:center; justify-content:center; border-radius:12px; background:var(--primary-background-color); flex-shrink:0; color:${alarm.color}; ${isArmed ? `box-shadow:0 0 14px ${alarm.color}88;` : ""} }
+        .alarm-info { flex:1; display:flex; flex-direction:column; gap:3px; min-width:0; cursor:pointer; }
+        .alarm-name { font-size:15px; font-weight:600; color:var(--primary-text-color); }
+        .alarm-state-row { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+        .alarm-state { font-size:13px; color:${alarm.color}; }
+        .alarm-since { font-size:11px; color:var(--secondary-text-color); font-style:italic; }
+        .alarm-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:7px; max-width:${this.config.compact ? "250px" : "320px"}; }
+        .btn { min-height:36px; padding:0 10px; border-radius:8px; border:none; box-sizing:border-box; font:600 12px var(--primary-font-family, sans-serif); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:opacity .2s, transform .1s; white-space:nowrap; }
+        .btn:hover { opacity:.85; transform:translateY(-1px); } .btn:active { transform:translateY(0); }
+        .btn ha-icon { --mdc-icon-size:17px; }
+        .btn-disarm { background:#4b5563; color:#fff; } .btn-arm-away { background:#206633; color:#fff; }
+        .btn-arm-home { background:#f59e0b; color:#fff; } .btn-arm-night { background:#7c3aed; color:#fff; }
+        .section { padding:${this.config.compact ? "10px 12px" : "14px 16px"}; background:var(--ha-card-background, var(--card-background-color)); }
+        .section + .section { border-top:1px solid var(--divider-color); }
+        .section-head { display:flex; align-items:center; margin-bottom:6px; }
+        .section-head .section-title { margin:0; }
+        .sensor-row, .fault-row, .pause-row { display:flex; align-items:center; gap:12px; padding:${this.config.compact ? "7px 0" : "10px 0"}; border-bottom:1px solid var(--divider-color); cursor:pointer; }
+        .sensor-row:last-child, .fault-row:last-child, .pause-row:last-child { border-bottom:none; }
+        .sensor-row:hover, .fault-row:hover, .pause-row:hover { background:color-mix(in srgb, var(--primary-color) 5%, transparent); }
+        .sensor-icon, .fault-icon { --mdc-icon-size:22px; color:var(--secondary-text-color); flex-shrink:0; }
+        .fault-icon { color:#ef4444; }
+        .sensor-label, .fault-info, .pause-info { flex:1; min-width:0; font-size:14px; color:var(--primary-text-color); }
+        .fault-name, .pause-name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .fault-state, .pause-state { font-size:11px; color:var(--secondary-text-color); margin-top:2px; }
+        .sensor-status { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; text-align:right; }
+        .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+        .ok-box { display:flex; align-items:center; gap:8px; color:#22c55e; font-size:13px; padding:8px 0; }
+        .pause-action { border:1px solid var(--divider-color); background:var(--secondary-background-color); color:var(--primary-text-color); border-radius:8px; min-height:32px; padding:0 9px; cursor:pointer; font-weight:600; }
+        .reset-grid { display:grid; grid-template-columns:repeat(${Math.max(1, Math.min(3, resets.length))}, minmax(0, 1fr)); gap:8px; }
+        .reset-btn { min-width:0; width:100%; min-height:42px; padding:6px 8px; background:var(--secondary-background-color); color:var(--primary-text-color); border:1px solid var(--divider-color); white-space:normal; }
+        .footer { display:flex; align-items:center; gap:10px; padding:7px 16px; border-top:1px solid var(--divider-color); color:var(--disabled-color); font-size:10px; }
+        .last-sync { flex:1; display:flex; align-items:center; gap:5px; }
+        .version { margin-left:auto; }
+        .modal-backdrop { position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.45); padding:20px; }
+        .modal-backdrop.open { display:flex; }
+        .modal { width:min(380px, 100%); background:var(--ha-card-background, var(--card-background-color)); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.35); padding:20px; color:var(--primary-text-color); }
+        .modal-title { font-size:18px; font-weight:700; margin-bottom:10px; }
+        .modal-message { font-size:14px; color:var(--secondary-text-color); margin-bottom:14px; }
+        .modal input { width:100%; box-sizing:border-box; padding:12px; border:1px solid var(--divider-color); border-radius:8px; background:var(--primary-background-color); color:var(--primary-text-color); font-size:16px; }
+        .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+        .modal-actions button { min-height:36px; border-radius:8px; padding:0 14px; border:0; cursor:pointer; font-weight:600; }
+        .secondary { background:var(--secondary-background-color); color:var(--primary-text-color); }
+        .primary { background:var(--primary-color); color:var(--text-primary-color, #fff); }
+        @media (max-width:650px) { .alarm-row { align-items:flex-start; flex-wrap:wrap; } .alarm-actions { width:100%; max-width:none; justify-content:flex-start; } .btn { flex:1; min-width:82px; } .reset-grid { grid-template-columns:1fr; } .connection { font-size:9px; } .connection span { display:inline; } .refresh-sync-label { display:none; } .refresh-sync-value { font-size:9px; } }
       </style>
-
-      <div class="card">
+      <ha-card class="card">
         <div class="alarm-section">
-          <div class="section-title">${this.config.title}</div>
+          <div class="topline">
+            <div class="section-title">${this.config.title || tr(this._hass, "defaultTitle")}</div>
+            ${(this.config.show_refresh || (this.config.show_last_sync && lastSyncText)) ? `
+              <div class="refresh-zone">
+                <div class="status-sync-stack">
+                  <div class="connection" title="${connectionOk ? tr(this._hass, "connected") : tr(this._hass, "disconnected")}">
+                    <span class="connection-dot"></span>
+                    <span>${connectionOk ? tr(this._hass, "connected") : tr(this._hass, "disconnected")}</span>
+                  </div>
+                  ${this.config.show_last_sync && lastSyncText ? `
+                    <div class="refresh-sync">
+                      <span class="refresh-sync-label">${tr(this._hass, "lastSync")}</span>
+                      <span class="refresh-sync-value">${lastSyncText}</span>
+                    </div>` : ""}
+                </div>
+                ${this.config.show_refresh ? `<button class="refresh-icon-btn" data-refresh title="${tr(this._hass, "refresh")}"><ha-icon icon="mdi:refresh"></ha-icon></button>` : ""}
+              </div>` : ""}
+          </div>
           <div class="alarm-row">
-            <div class="alarm-icon-wrap" style="color:${alarmColor};${isArmed || isTriggered ? `box-shadow:0 0 14px ${alarmColor}88;` : ""}">
-              ${iconAlarm}
-            </div>
-            <div class="alarm-info">
-              <span class="alarm-name">Alarme</span>
-              <div class="alarm-state-row">
-                <span class="alarm-state" style="color:${alarmColor}">${alarmLabel}</span>
-                <span class="alarm-since">${sinceLabel}</span>
-              </div>
+            <div class="alarm-icon-wrap"><ha-icon icon="mdi:shield-home" style="--mdc-icon-size:26px"></ha-icon></div>
+            <div class="alarm-info" data-more-info="${this.config.alarm_entity}" title="${tr(this._hass, "clickDetails")}">
+              <span class="alarm-name">${this._formatName(alarm.entity, "alarm")}</span>
+              <div class="alarm-state-row"><span class="alarm-state">${alarm.label}</span><span class="alarm-since">${this._sinceLabel(this.config.alarm_entity)}</span></div>
             </div>
             <div class="alarm-actions">
-              <button class="btn btn-disarm" data-action="disarm">
-                ${iconLock} Désarmer
-              </button>
-              <button class="btn btn-arm-away" data-action="arm_away">
-                ${iconLock} Absent
-              </button>
-              <button class="btn btn-arm-home" data-action="arm_home">
-               ${iconLock} Présent
-              </button>
+              ${alarmActions.map(action => `<button class="btn ${action.cls}" data-alarm-action="${action.key}"><ha-icon icon="${action.icon}"></ha-icon>${tr(this._hass, action.label)}</button>`).join("")}
             </div>
           </div>
         </div>
 
-        <div class="sensors-section">
-          <div class="section-title">Capteurs</div>
-          ${activeSensors.length
-            ? activeSensors.map(s => {
-                const label = this.config.labels[s.key] || s.defaultText;
-                const { statusLabel, statusColor, dotColor } = this._sensorValues(s);
-                return `
-                  <div class="sensor-row" data-key="${s.key}">
-                    <span class="sensor-label">${label}</span>
-                    <span class="sensor-status" style="color:${statusColor}">
-                      <span class="dot" style="background:${dotColor}"></span>
-                      <span class="sensor-val">${statusLabel}</span>
-                    </span>
-                  </div>`;
-              }).join("")
-            : `<div class="no-sensors">Aucun capteur sélectionné</div>`}
+        <div class="section">
+          <div class="section-head"><div class="section-title">${tr(this._hass, "sensorsTitle")}</div></div>
+          ${activeSensors.length ? activeSensors.map(sensor => {
+            const values = this._sensorValues(sensor);
+            const label = this.config.labels[sensor.key] || this._formatName(values.entity, sensor.defaultText);
+            return `<div class="sensor-row" data-key="${sensor.key}" ${values.entityId ? `data-more-info="${values.entityId}"` : ""}>
+              <ha-icon class="sensor-icon" icon="${values.icon}"></ha-icon>
+              <span class="sensor-label">${label}</span>
+              <span class="sensor-status" style="color:${values.statusColor}"><span class="dot" style="background:${values.dotColor}"></span><span class="sensor-val">${values.statusLabel}</span></span>
+            </div>`;
+          }).join("") : `<div class="ok-box">${tr(this._hass, "noSensors")}</div>`}
         </div>
 
-        <div class="card-version">Somfy Protexial Card ${CARD_VERSION}</div>
-      </div>
-    `;
+        ${this.config.show_faults ? `<div class="section">
+          <div class="section-head"><div class="section-title">${tr(this._hass, "faultsTitle")}${faultEntities.length ? ` (${faultEntities.length})` : ""}</div></div>
+          ${faultEntities.length ? faultEntities.map(entity => `<div class="fault-row" data-more-info="${entity.entity_id}">
+            <ha-icon class="fault-icon" icon="${this._entityIcon(entity)}"></ha-icon>
+            <div class="fault-info"><div class="fault-name">${this._formatName(entity, "faultsTitle")}</div><div class="fault-state">${this._formatState(entity)}</div></div>
+          </div>`).join("") : `<div class="ok-box"><ha-icon icon="mdi:check-circle"></ha-icon>${tr(this._hass, "noFaults")}</div>`}
+        </div>` : ""}
 
-    // Boutons
-this.shadowRoot.querySelectorAll(".btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const action = btn.dataset.action;
+        ${this.config.show_pauses && pauses.length ? `<div class="section">
+          <div class="section-head"><div class="section-title">${tr(this._hass, "equipmentTitle")}</div></div>
+          ${pauses.map(entity => `<div class="pause-row" data-more-info="${entity.entity_id}">
+            <ha-icon class="sensor-icon" icon="${entity.state === "off" ? "mdi:pause-circle" : "mdi:play-circle-outline"}"></ha-icon>
+            <div class="pause-info"><div class="pause-name">${this._formatName(entity, "equipmentTitle")}</div><div class="pause-state">${entity.state === "off" ? tr(this._hass, "paused") : tr(this._hass, "active")}</div></div>
+            <button class="pause-action" data-toggle-switch="${entity.entity_id}">${entity.state === "off" ? tr(this._hass, "resume") : tr(this._hass, "pause")}</button>
+          </div>`).join("")}
+        </div>` : ""}
 
-    const entity = this._getState(this.config.alarm_entity);
+        ${resets.length ? `<div class="section">
+          <div class="section-head"><div class="section-title">${tr(this._hass, "resetsTitle")}</div></div>
+          <div class="reset-grid">${resets.map(reset => `<button class="btn reset-btn" data-reset-key="${reset.key}" data-entity-id="${reset.entityId}"><ha-icon icon="${reset.icon}"></ha-icon><span>${tr(this._hass, reset.text)}</span></button>`).join("")}</div>
+        </div>` : ""}
 
-    // ── Détection si un code est requis ──
-    const codeRequired =
-      entity?.attributes?.code_format ||
-      entity?.attributes?.code_arm_required === true;
+        <div class="footer">
+          <span></span>
+          <span class="version">Somfy Protexial Card ${CARD_VERSION}</span>
+        </div>
+      </ha-card>
 
-    // code éventuellement défini dans la config
-    let code = this.config.alarm_code;
+      <div class="modal-backdrop" id="modal">
+        <div class="modal">
+          <div class="modal-title" id="modal-title"></div>
+          <div class="modal-message" id="modal-message"></div>
+          <input id="modal-input" type="password" autocomplete="current-password">
+          <div class="modal-actions">
+            <button class="secondary" data-modal-cancel>${tr(this._hass, "cancel")}</button>
+            <button class="primary" data-modal-confirm>${tr(this._hass, "confirm")}</button>
+          </div>
+        </div>
+      </div>`;
 
-    // ── Si code requis et absent → demande utilisateur ──
-    if (codeRequired && !code) {
-      code = prompt("Code / PIN de l'alarme :");
-      if (!code) return; // annulation utilisateur
-    }
+    this.shadowRoot.querySelectorAll("[data-more-info]").forEach(row => {
+      row.addEventListener("click", event => {
+        if (event.target.closest("button")) return;
+        fireMoreInfo(this, row.dataset.moreInfo);
+      });
+    });
+    this.shadowRoot.querySelectorAll("[data-alarm-action]").forEach(button => {
+      button.addEventListener("click", () => this._callAlarmAction(button.dataset.alarmAction));
+    });
+    this.shadowRoot.querySelectorAll("[data-reset-key]").forEach(button => {
+      button.addEventListener("click", () => this._callReset(button.dataset.resetKey, button.dataset.entityId));
+    });
+    this.shadowRoot.querySelectorAll("[data-toggle-switch]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+        this._togglePause(button.dataset.toggleSwitch);
+      });
+    });
+    const refresh = this.shadowRoot.querySelector("[data-refresh]");
+    if (refresh) refresh.addEventListener("click", () => this._refresh(refreshEntity));
+  }
 
-    const service =
-      action === "disarm"
-        ? "alarm_disarm"
-        : action === "arm_home"
-          ? "alarm_arm_home"
-          : "alarm_arm_away";
+  _showModal({ title, message = "", input = false, confirmText, inputPlaceholder = "" }) {
+    return new Promise(resolve => {
+      const modal = this.shadowRoot.getElementById("modal");
+      const titleEl = this.shadowRoot.getElementById("modal-title");
+      const messageEl = this.shadowRoot.getElementById("modal-message");
+      const inputEl = this.shadowRoot.getElementById("modal-input");
+      const confirmBtn = modal.querySelector("[data-modal-confirm]");
+      const cancelBtn = modal.querySelector("[data-modal-cancel]");
+      titleEl.textContent = title;
+      messageEl.textContent = message;
+      messageEl.style.display = message ? "" : "none";
+      inputEl.style.display = input ? "" : "none";
+      inputEl.placeholder = inputPlaceholder;
+      inputEl.value = "";
+      confirmBtn.textContent = confirmText || tr(this._hass, "confirm");
+      modal.classList.add("open");
 
-    this._hass.callService(
-      "alarm_control_panel",
-      service,
-      code ? { code } : {},
-      { entity_id: this.config.alarm_entity }
-    );
-  });
-});
-}
-     
-  // ── Mise à jour légère (sans reconstruire le DOM) ────
-  _update() {
-    if (!this._hass) return;
-
-    const alarmEnt   = this._getState(this.config.alarm_entity);
-    const alarmState = alarmEnt?.state ?? "unavailable";
-    const { label: alarmLabel, color: alarmColor } = this._alarmLabel(alarmState);
-    const isArmed     = !["disarmed", "unavailable"].includes(alarmState);
-    const isTriggered = alarmState === "triggered";
-    const sinceLabel  = this._sinceLabel(this.config.alarm_entity);
-    const sr = this.shadowRoot;
-
-    // Icône alarme
-    const iconWrap = sr.querySelector(".alarm-icon-wrap");
-    if (iconWrap) {
-      iconWrap.style.color = alarmColor;
-      iconWrap.style.boxShadow = (isArmed || isTriggered) ? `0 0 14px ${alarmColor}88` : "";
-    }
-
-    // État + depuis
-    const stateEl = sr.querySelector(".alarm-state");
-    if (stateEl) { stateEl.textContent = alarmLabel; stateEl.style.color = alarmColor; }
-    const sinceEl = sr.querySelector(".alarm-since");
-    if (sinceEl) sinceEl.textContent = sinceLabel;
-
-    // Capteurs
-    SENSORS_DEF.filter(s => this.config.sensors.includes(s.key)).forEach(s => {
-      const row = sr.querySelector(`.sensor-row[data-key="${s.key}"]`);
-      if (!row) return;
-      const { statusLabel, statusColor, dotColor } = this._sensorValues(s);
-      const statusEl = row.querySelector(".sensor-status");
-      const dotEl    = row.querySelector(".dot");
-      const valEl    = row.querySelector(".sensor-val");
-      if (statusEl) statusEl.style.color = statusColor;
-      if (dotEl)    dotEl.style.background = dotColor;
-      if (valEl)    valEl.textContent = statusLabel;
+      const close = result => {
+        modal.classList.remove("open");
+        confirmBtn.onclick = null;
+        cancelBtn.onclick = null;
+        modal.onclick = null;
+        inputEl.onkeydown = null;
+        resolve(result);
+      };
+      confirmBtn.onclick = () => close(input ? inputEl.value : true);
+      cancelBtn.onclick = () => close(null);
+      modal.onclick = event => { if (event.target === modal) close(null); };
+      inputEl.onkeydown = event => {
+        if (event.key === "Enter") close(inputEl.value);
+        if (event.key === "Escape") close(null);
+      };
+      if (input) requestAnimationFrame(() => inputEl.focus());
     });
   }
 
-  getCardSize() { return 5; }
+  async _callAlarmAction(action) {
+    const entity = this._getState(this.config.alarm_entity);
+    const codeRequired = Boolean(entity?.attributes?.code_format || entity?.attributes?.code_arm_required === true);
+    let code = this.config.alarm_code;
+    if (codeRequired && !code) {
+      code = await this._showModal({
+        title: tr(this._hass, "codeTitle"),
+        input: true,
+        inputPlaceholder: tr(this._hass, "codePlaceholder"),
+        confirmText: tr(this._hass, "validate"),
+      });
+      if (!code) return;
+    }
+    const serviceMap = {
+      disarm: "alarm_disarm",
+      arm_home: "alarm_arm_home",
+      arm_away: "alarm_arm_away",
+      arm_night: "alarm_arm_night",
+    };
+    const service = serviceMap[action];
+    if (!service) return;
+    try {
+      await this._hass.callService("alarm_control_panel", service, code ? { code } : {}, { entity_id: this.config.alarm_entity });
+    } catch (error) {
+      console.error("Somfy Protexial Card alarm action failed", error);
+    }
+  }
+
+  async _callReset(key, entityId) {
+    const reset = RESET_DEF.find(item => item.key === key);
+    if (!reset || !entityId) return;
+    const entity = this._getState(entityId);
+    const label = this._formatName(entity, reset.text);
+    const confirmed = await this._showModal({
+      title: tr(this._hass, "confirmReset"),
+      message: label,
+      confirmText: tr(this._hass, "confirm"),
+    });
+    if (!confirmed) return;
+    try {
+      await this._hass.callService("button", "press", {}, { entity_id: entityId });
+    } catch (error) {
+      console.error("Somfy Protexial Card reset failed", error);
+    }
+  }
+
+  async _togglePause(entityId) {
+    const entity = this._getState(entityId);
+    if (!entity) return;
+    try {
+      await this._hass.callService("switch", entity.state === "on" ? "turn_off" : "turn_on", {}, { entity_id: entityId });
+    } catch (error) {
+      console.error("Somfy Protexial Card pause toggle failed", error);
+    }
+  }
+
+  async _refresh(refreshEntity) {
+    if (this._refreshing) return;
+    this._refreshing = true;
+    this._updateRefreshButton();
+    try {
+      if (refreshEntity && this._getState(refreshEntity)) {
+        await this._hass.callService("button", "press", {}, { entity_id: refreshEntity });
+      } else {
+        const ids = SENSORS_DEF.map(sensor => this._resolveSensorEntity(sensor))
+          .concat([this.config.alarm_entity])
+          .filter(entityId => entityId && this._getState(entityId));
+        if (ids.length) {
+          await this._hass.callService("homeassistant", "update_entity", {}, { entity_id: ids });
+        }
+      }
+    } catch (error) {
+      console.error("Somfy Protexial Card refresh failed", error);
+    } finally {
+      window.setTimeout(() => {
+        this._refreshing = false;
+        this._updateRefreshButton();
+      }, 600);
+    }
+  }
+
+  _updateRefreshButton() {
+    const button = this.shadowRoot.querySelector("[data-refresh]");
+    if (!button) return;
+    button.disabled = this._refreshing;
+    const icon = button.querySelector("ha-icon");
+    if (icon) icon.classList.toggle("spin", this._refreshing);
+    button.title = this._refreshing ? tr(this._hass, "refreshing") : tr(this._hass, "refresh");
+  }
+
+  _update() {
+    if (!this._hass || !this.shadowRoot.querySelector(".card")) return;
+    if (this.shadowRoot.getElementById("modal")?.classList.contains("open")) return;
+    // Dynamic sections can appear/disappear when faults or pause switches change.
+    this._render();
+    this._updateRefreshButton();
+  }
+
+  getCardSize() {
+    const base = this.config?.compact ? 5 : 7;
+    return base + (this.config?.show_faults ? 1 : 0) + (this.config?.show_pauses ? 1 : 0);
+  }
 }
 
-if (!customElements.get("somfy-protexial-card"))
+if (!customElements.get("somfy-protexial-card")) {
   customElements.define("somfy-protexial-card", SomfyProtexialCard);
+}
 
 window.customCards = window.customCards || [];
-window.customCards.push({
-  type: "somfy-protexial-card",
-  name: "Somfy Protexial Card",
-  description: "Carte personnalisée pour alarme Somfy Protexial",
-  configurable: true,
-});
+if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
+  window.customCards.push({
+    type: "somfy-protexial-card",
+    name: "Somfy Protexial Card",
+    description: "Multilingual card for Somfy Protexial and Protexiom alarm systems",
+    configurable: true,
+  });
+}
