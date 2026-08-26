@@ -24,25 +24,8 @@ Elle est configurable via l'éditeur graphique et est compatible thèmes clair e
 
 ## ✅ Prérequis
 - Home Assistant 2025.12 ou supérieur
-- Home Assistant avec l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) installée et configurée 
+- Home Assistant avec l'intégration [somfy-protexial](https://github.com/AuroreVgn/somfy-protexial) installée et configurée. **Version minimale de l'installation 2.1.1.**
 
-Les entités suivantes doivent exister dans HA :
-
-| Entité par défaut | Description |
-|---|---|
-| `alarm_control_panel.alarme` | Centrale d'alarme |
-| `binary_sensor.somfy_protexial_batterie` | État des batteries |
-| `binary_sensor.somfy_protexial_camera` | Caméra |
-| `binary_sensor.somfy_protexial_centrale` | Centrale |
-| `binary_sensor.somfy_protexial_comm_centrale_capteurs` | Communication Centrale ↔ Capteurs |
-| `binary_sensor.somfy_protexial_communication_gsm` | Communication GSM |
-| `binary_sensor.somfy_protexial_mouvement` | Détection de mouvement |
-| `sensor.somfy_protexial_operateur_gsm` | Opérateur GSM |
-| `binary_sensor.somfy_protexial_portes_ou_fenetres` | Portes / Fenêtres |
-| `sensor.somfy_protexial_signal_gsm_5` | Signal GSM |
-| `button.reinitialiser_defaut_alarme`|  Réinitialisation des défauts d'alarmes (mouvement, ouverture, arrachement) |
-| `button.reinitialiser_defaut_liaison_radio`| Réinitialisation des défauts de lien entre la centrale et les capteurs |
-| `button.reinitialiser_defaut_piles`| Réinitialisation des défauts piles |
 
 ---
 
