@@ -1156,7 +1156,7 @@ if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
 }
 
 /* Somfy Protexial Elements Card */
-const ELEMENTS_CARD_VERSION = "v2.1.2";
+const ELEMENTS_CARD_VERSION = "v2.1.1";
 
 const ELEMENTS_TRANSLATIONS = {
   fr: {
@@ -1272,21 +1272,10 @@ class SomfyProtexialElementsCardEditor extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this._entityRegistry = null;
-    this._registryLoading = false;
-    this._loadedDevice = null;
   }
 
   set hass(hass) {
     this._hass = hass;
-
-    if (this.config?.device_id &&
-        this._loadedDevice !== this.config.device_id &&
-        !this._registryLoading) {
-      this._loadRegistry();
-      return;
-    }
-
     this._render();
   }
 
@@ -1305,8 +1294,6 @@ class SomfyProtexialElementsCardEditor extends HTMLElement {
 
   _render() {
     if (!this._hass || !this._config) return;
-    const fr = spLang(this._hass) === "fr";
-
     this.shadowRoot.innerHTML = `<ha-form id="form"></ha-form>`;
     const form = this.shadowRoot.getElementById("form");
     form.hass = this._hass;
@@ -1325,13 +1312,7 @@ class SomfyProtexialElementsCardEditor extends HTMLElement {
       compact: this._config.compact === true,
     };
 
-    const labels = fr ? {
-      device_id: et(this._hass, "device"),
-      title: et(this._hass, "title"),
-      only_problems: et(this._hass, "onlyProblems"),
-      show_entity_id: et(this._hass, "showEntityId"),
-      compact: et(this._hass, "compact"),
-    } : {
+    const labels = {
       device_id: et(this._hass, "device"),
       title: et(this._hass, "title"),
       only_problems: et(this._hass, "onlyProblems"),
@@ -1577,31 +1558,96 @@ class SomfyProtexialElementsCard extends HTMLElement {
   _human(value) {
     const v = String(value ?? "");
     const n = v.toLowerCase();
-    const fr = {
-      ok: "OK",
-      low: "Faible",
-      connected: "Connectée",
-      disconnected: "Déconnectée",
-      "domestic fault/intrusion": "Défaut / intrusion",
-      "open/ripped off": "Ouvert / arraché",
-      closed: "Fermée",
-      open: "Ouverte",
-      running: "Actif",
-      paused: "En pause",
+
+    const values = {
+      fr: {
+        ok: "OK",
+        low: "Faible",
+        connected: "Connectée",
+        disconnected: "Déconnectée",
+        "domestic fault/intrusion": "Défaut / intrusion",
+        "open/ripped off": "Ouvert / arraché",
+        closed: "Fermée",
+        open: "Ouverte",
+        running: "Actif",
+        paused: "En pause",
+      },
+      en: {
+        ok: "OK",
+        low: "Low",
+        connected: "Connected",
+        disconnected: "Disconnected",
+        "domestic fault/intrusion": "Fault / intrusion",
+        "open/ripped off": "Open / ripped off",
+        closed: "Closed",
+        open: "Open",
+        running: "Active",
+        paused: "Paused",
+      },
+      de: {
+        ok: "OK",
+        low: "Schwach",
+        connected: "Verbunden",
+        disconnected: "Getrennt",
+        "domestic fault/intrusion": "Fehler / Einbruch",
+        "open/ripped off": "Offen / abgerissen",
+        closed: "Geschlossen",
+        open: "Offen",
+        running: "Aktiv",
+        paused: "Pausiert",
+      },
+      es: {
+        ok: "OK",
+        low: "Baja",
+        connected: "Conectado",
+        disconnected: "Desconectado",
+        "domestic fault/intrusion": "Fallo / intrusión",
+        "open/ripped off": "Abierto / arrancado",
+        closed: "Cerrado",
+        open: "Abierto",
+        running: "Activo",
+        paused: "En pausa",
+      },
+      it: {
+        ok: "OK",
+        low: "Bassa",
+        connected: "Connesso",
+        disconnected: "Disconnesso",
+        "domestic fault/intrusion": "Anomalia / intrusione",
+        "open/ripped off": "Aperto / strappato",
+        closed: "Chiuso",
+        open: "Aperto",
+        running: "Attivo",
+        paused: "In pausa",
+      },
+      nl: {
+        ok: "OK",
+        low: "Laag",
+        connected: "Verbonden",
+        disconnected: "Niet verbonden",
+        "domestic fault/intrusion": "Storing / inbraak",
+        "open/ripped off": "Open / losgetrokken",
+        closed: "Gesloten",
+        open: "Open",
+        running: "Actief",
+        paused: "Gepauzeerd",
+      },
+      pt: {
+        ok: "OK",
+        low: "Fraca",
+        connected: "Ligado",
+        disconnected: "Desligado",
+        "domestic fault/intrusion": "Falha / intrusão",
+        "open/ripped off": "Aberto / arrancado",
+        closed: "Fechado",
+        open: "Aberto",
+        running: "Ativo",
+        paused: "Em pausa",
+      },
     };
-    const en = {
-      ok: "OK",
-      low: "Low",
-      connected: "Connected",
-      disconnected: "Disconnected",
-      "domestic fault/intrusion": "Fault / intrusion",
-      "open/ripped off": "Open / ripped off",
-      closed: "Closed",
-      open: "Open",
-      running: "Active",
-      paused: "Paused",
-    };
-    return (this._lang() === "fr" ? fr : en)[n] || v;
+
+    const lang = this._lang();
+    return values[lang]?.[n] ?? values.en[n] ?? v;
   }
 
   _ok(def, value) {
@@ -1622,7 +1668,7 @@ class SomfyProtexialElementsCard extends HTMLElement {
     // Remove integration prefixes that can differ between installations.
     objectId = objectId
       .replace(/^somfy_protexial_/, "")
-      .replace(/^somfy_protexiom_/, "")
+      .replace(/^somfy_protexiom_/, "");
 
     // Remove role suffixes.
     objectId = objectId
@@ -1820,7 +1866,7 @@ class SomfyProtexialElementsCard extends HTMLElement {
     const elements = this._elements();
 
     if (this.config.device_id && !this._registryLoading) {
-      console.debug("[Somfy Protexial Elements Card v1.4.8]", {
+      console.debug("[Somfy Protexial Elements Card v2.1.1]", {
         device_id: this.config.device_id,
         registry_device_entities: this._deviceEntityIds(),
         detected_elements: elements.map(e => e.entity_id),
