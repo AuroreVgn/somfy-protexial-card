@@ -1,8 +1,15 @@
 /* ========================================================
+   Somfy Protexial Cards
+   One HACS resource, two Lovelace cards:
+   - custom:somfy-protexial-card
+   - custom:somfy-protexial-elements-card
+   ======================================================== */
+
+/* ========================================================
    Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const CARD_VERSION = "v2.1.1";
+const CARD_VERSION = "v2.1.2";
 
 const ALARM_FEATURES = {
   ARM_HOME: 1,
@@ -41,14 +48,13 @@ const TRANSLATIONS = {
     lessThanMinute: "depuis moins d’une minute", sinceMinutes: "depuis {n} min", sinceHours: "depuis {n}",
     resetBatteryEntity: "Bouton de réinitialisation des piles", resetAlarmEntity: "Bouton de réinitialisation de l’alarme",
     resetLinkEntity: "Bouton de réinitialisation de la liaison radio", automaticDetection: "Détection automatique des entités",
-    showFaults: "Afficher les défauts", showPauses: "Afficher les équipements en pause", showLastSync: "Afficher la dernière synchronisation",
+    showFaults: "Afficher les défauts", showLastSync: "Afficher la dernière synchronisation",
     showRefresh: "Afficher le bouton d’actualisation", compactMode: "Mode compact", lastSyncEntity: "Entité dernière synchronisation",
     refreshEntity: "Bouton d’actualisation", faultsTitle: "Défauts", noFaults: "Aucun défaut détecté",
-    equipmentTitle: "Équipements", paused: "En pause", active: "Actif", pause: "Pause", resume: "Réactiver",
     lastSync: "Dernière synchronisation", refresh: "Actualiser", refreshing: "Actualisation…", connected: "Centrale connectée",
     disconnected: "Centrale indisponible", codeTitle: "Code / PIN", codePlaceholder: "Saisir le code", cancel: "Annuler",
     validate: "Valider", confirm: "Confirmer", actionError: "Impossible d’exécuter l’action", clickDetails: "Cliquez pour les détails",
-    settingsDisplay: "Affichage avancé"
+    settingsDisplay: "Affichage avancé", keypadClear: "Effacer", keypadBackspace: "Retour"
   },
   en: {
     cardSettings: "Card settings", alarmEntity: "Alarm entity", cardTitle: "Card title", entity: "Entity",
@@ -60,14 +66,13 @@ const TRANSLATIONS = {
     defaultTitle: "Somfy Protexial — Control", unavailable: "Unavailable", unknown: "Unknown",
     lessThanMinute: "for less than a minute", sinceMinutes: "for {n} min", sinceHours: "for {n}",
     resetBatteryEntity: "Battery reset button", resetAlarmEntity: "Alarm reset button", resetLinkEntity: "Radio-link reset button",
-    automaticDetection: "Automatic entity detection", showFaults: "Show faults", showPauses: "Show paused equipment",
+    automaticDetection: "Automatic entity detection", showFaults: "Show faults",
     showLastSync: "Show last synchronization", showRefresh: "Show refresh button", compactMode: "Compact mode",
     lastSyncEntity: "Last synchronization entity", refreshEntity: "Refresh button", faultsTitle: "Faults",
-    noFaults: "No fault detected", equipmentTitle: "Equipment", paused: "Paused", active: "Active", pause: "Pause",
-    resume: "Resume", lastSync: "Last synchronization", refresh: "Refresh", refreshing: "Refreshing…",
+    noFaults: "No fault detected", lastSync: "Last synchronization", refresh: "Refresh", refreshing: "Refreshing…",
     connected: "Control panel connected", disconnected: "Control panel unavailable", codeTitle: "Code / PIN",
     codePlaceholder: "Enter code", cancel: "Cancel", validate: "Validate", confirm: "Confirm",
-    actionError: "Unable to execute action", clickDetails: "Click for details", settingsDisplay: "Advanced display"
+    actionError: "Unable to execute action", clickDetails: "Click for details", settingsDisplay: "Advanced display", keypadClear: "Clear", keypadBackspace: "Backspace"
   },
   de: {
     cardSettings:"Karteneinstellungen", alarmEntity:"Alarm-Entität", cardTitle:"Kartentitel", entity:"Entität", displayedName:"Angezeigter Name",
@@ -77,13 +82,12 @@ const TRANSLATIONS = {
     motion:"Bewegung", camera:"Kamera", sensors:"Sensoren", gsm:"GSM", operator:"Anbieter", gsmSignal:"GSM-Signal (/5)",
     defaultTitle:"Somfy Protexial — Steuerung", unavailable:"Nicht verfügbar", unknown:"Unbekannt",
     lessThanMinute:"seit weniger als einer Minute", sinceMinutes:"seit {n} Min.", sinceHours:"seit {n}",
-    automaticDetection:"Automatische Entitätserkennung", showFaults:"Fehler anzeigen", showPauses:"Pausierte Geräte anzeigen",
+    automaticDetection:"Automatische Entitätserkennung", showFaults:"Fehler anzeigen",
     showLastSync:"Letzte Synchronisierung anzeigen", showRefresh:"Aktualisierungsschaltfläche anzeigen", compactMode:"Kompaktmodus",
     lastSyncEntity:"Entität letzte Synchronisierung", refreshEntity:"Aktualisierungsschaltfläche", faultsTitle:"Fehler",
-    noFaults:"Keine Fehler erkannt", equipmentTitle:"Geräte", paused:"Pausiert", active:"Aktiv", pause:"Pausieren",
-    resume:"Reaktivieren", lastSync:"Letzte Synchronisierung", refresh:"Aktualisieren", refreshing:"Aktualisierung…",
+    noFaults:"Keine Fehler erkannt", lastSync:"Letzte Synchronisierung", refresh:"Aktualisieren", refreshing:"Aktualisierung…",
     connected:"Zentrale verbunden", disconnected:"Zentrale nicht verfügbar", codeTitle:"Code / PIN", codePlaceholder:"Code eingeben",
-    cancel:"Abbrechen", validate:"Bestätigen", confirm:"Bestätigen", clickDetails:"Für Details klicken", settingsDisplay:"Erweiterte Anzeige",
+    cancel:"Abbrechen", validate:"Bestätigen", confirm:"Bestätigen", clickDetails:"Für Details klicken", settingsDisplay:"Erweiterte Anzeige", keypadClear:"Löschen", keypadBackspace:"Zurück",
     resetBatteryEntity:"Taste zum Zurücksetzen der Batteriefehler", resetAlarmEntity:"Taste zum Zurücksetzen der Alarmfehler",
     resetLinkEntity:"Taste zum Zurücksetzen der Funkverbindung"
   },
@@ -95,13 +99,12 @@ const TRANSLATIONS = {
     motion:"Movimiento", camera:"Cámara", sensors:"Sensores", gsm:"GSM", operator:"Operador", gsmSignal:"Señal GSM (/5)",
     defaultTitle:"Somfy Protexial — Control", unavailable:"No disponible", unknown:"Desconocido",
     lessThanMinute:"desde hace menos de un minuto", sinceMinutes:"desde hace {n} min", sinceHours:"desde hace {n}",
-    automaticDetection:"Detección automática de entidades", showFaults:"Mostrar fallos", showPauses:"Mostrar equipos en pausa",
+    automaticDetection:"Detección automática de entidades", showFaults:"Mostrar fallos",
     showLastSync:"Mostrar última sincronización", showRefresh:"Mostrar botón de actualización", compactMode:"Modo compacto",
     lastSyncEntity:"Entidad de última sincronización", refreshEntity:"Botón de actualización", faultsTitle:"Fallos",
-    noFaults:"No se detectaron fallos", equipmentTitle:"Equipos", paused:"En pausa", active:"Activo", pause:"Pausar",
-    resume:"Reactivar", lastSync:"Última sincronización", refresh:"Actualizar", refreshing:"Actualizando…",
+    noFaults:"No se detectaron fallos", lastSync:"Última sincronización", refresh:"Actualizar", refreshing:"Actualizando…",
     connected:"Central conectada", disconnected:"Central no disponible", codeTitle:"Código / PIN", codePlaceholder:"Introducir código",
-    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Haz clic para ver detalles", settingsDisplay:"Visualización avanzada",
+    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Haz clic para ver detalles", settingsDisplay:"Visualización avanzada", keypadClear:"Borrar", keypadBackspace:"Atrás",
     resetBatteryEntity:"Botón de reinicio de pilas", resetAlarmEntity:"Botón de reinicio de alarma", resetLinkEntity:"Botón de reinicio del enlace de radio"
   },
   it: {
@@ -112,13 +115,12 @@ const TRANSLATIONS = {
     motion:"Movimento", camera:"Telecamera", sensors:"Sensori", gsm:"GSM", operator:"Operatore", gsmSignal:"Segnale GSM (/5)",
     defaultTitle:"Somfy Protexial — Controllo", unavailable:"Non disponibile", unknown:"Sconosciuto",
     lessThanMinute:"da meno di un minuto", sinceMinutes:"da {n} min", sinceHours:"da {n}",
-    automaticDetection:"Rilevamento automatico entità", showFaults:"Mostra anomalie", showPauses:"Mostra dispositivi in pausa",
+    automaticDetection:"Rilevamento automatico entità", showFaults:"Mostra anomalie",
     showLastSync:"Mostra ultima sincronizzazione", showRefresh:"Mostra pulsante aggiorna", compactMode:"Modalità compatta",
     lastSyncEntity:"Entità ultima sincronizzazione", refreshEntity:"Pulsante aggiorna", faultsTitle:"Anomalie",
-    noFaults:"Nessuna anomalia rilevata", equipmentTitle:"Dispositivi", paused:"In pausa", active:"Attivo", pause:"Pausa",
-    resume:"Riattiva", lastSync:"Ultima sincronizzazione", refresh:"Aggiorna", refreshing:"Aggiornamento…",
+    noFaults:"Nessuna anomalia rilevata", lastSync:"Ultima sincronizzazione", refresh:"Aggiorna", refreshing:"Aggiornamento…",
     connected:"Centrale connessa", disconnected:"Centrale non disponibile", codeTitle:"Codice / PIN", codePlaceholder:"Inserisci codice",
-    cancel:"Annulla", validate:"Conferma", confirm:"Conferma", clickDetails:"Clicca per i dettagli", settingsDisplay:"Visualizzazione avanzata",
+    cancel:"Annulla", validate:"Conferma", confirm:"Conferma", clickDetails:"Clicca per i dettagli", settingsDisplay:"Visualizzazione avanzata", keypadClear:"Cancella", keypadBackspace:"Indietro",
     resetBatteryEntity:"Pulsante ripristino batterie", resetAlarmEntity:"Pulsante ripristino allarme", resetLinkEntity:"Pulsante ripristino collegamento radio"
   },
   nl: {
@@ -129,13 +131,12 @@ const TRANSLATIONS = {
     motion:"Beweging", camera:"Camera", sensors:"Sensoren", gsm:"GSM", operator:"Provider", gsmSignal:"GSM-signaal (/5)",
     defaultTitle:"Somfy Protexial — Bediening", unavailable:"Niet beschikbaar", unknown:"Onbekend",
     lessThanMinute:"sinds minder dan een minuut", sinceMinutes:"sinds {n} min", sinceHours:"sinds {n}",
-    automaticDetection:"Automatische entiteitsdetectie", showFaults:"Storingen tonen", showPauses:"Gepauzeerde apparaten tonen",
+    automaticDetection:"Automatische entiteitsdetectie", showFaults:"Storingen tonen",
     showLastSync:"Laatste synchronisatie tonen", showRefresh:"Vernieuwknop tonen", compactMode:"Compacte modus",
     lastSyncEntity:"Entiteit laatste synchronisatie", refreshEntity:"Vernieuwknop", faultsTitle:"Storingen",
-    noFaults:"Geen storing gedetecteerd", equipmentTitle:"Apparaten", paused:"Gepauzeerd", active:"Actief", pause:"Pauzeren",
-    resume:"Hervatten", lastSync:"Laatste synchronisatie", refresh:"Vernieuwen", refreshing:"Vernieuwen…",
+    noFaults:"Geen storing gedetecteerd", lastSync:"Laatste synchronisatie", refresh:"Vernieuwen", refreshing:"Vernieuwen…",
     connected:"Centrale verbonden", disconnected:"Centrale niet beschikbaar", codeTitle:"Code / PIN", codePlaceholder:"Voer code in",
-    cancel:"Annuleren", validate:"Bevestigen", confirm:"Bevestigen", clickDetails:"Klik voor details", settingsDisplay:"Geavanceerde weergave",
+    cancel:"Annuleren", validate:"Bevestigen", confirm:"Bevestigen", clickDetails:"Klik voor details", settingsDisplay:"Geavanceerde weergave", keypadClear:"Wissen", keypadBackspace:"Terug",
     resetBatteryEntity:"Knop batterijfouten resetten", resetAlarmEntity:"Knop alarmfouten resetten", resetLinkEntity:"Knop radioverbinding resetten"
   },
   pt: {
@@ -146,13 +147,12 @@ const TRANSLATIONS = {
     motion:"Movimento", camera:"Câmara", sensors:"Sensores", gsm:"GSM", operator:"Operador", gsmSignal:"Sinal GSM (/5)",
     defaultTitle:"Somfy Protexial — Controlo", unavailable:"Indisponível", unknown:"Desconhecido",
     lessThanMinute:"há menos de um minuto", sinceMinutes:"há {n} min", sinceHours:"há {n}",
-    automaticDetection:"Deteção automática de entidades", showFaults:"Mostrar falhas", showPauses:"Mostrar equipamentos em pausa",
+    automaticDetection:"Deteção automática de entidades", showFaults:"Mostrar falhas",
     showLastSync:"Mostrar última sincronização", showRefresh:"Mostrar botão de atualização", compactMode:"Modo compacto",
     lastSyncEntity:"Entidade da última sincronização", refreshEntity:"Botão de atualização", faultsTitle:"Falhas",
-    noFaults:"Nenhuma falha detetada", equipmentTitle:"Equipamentos", paused:"Em pausa", active:"Ativo", pause:"Pausar",
-    resume:"Reativar", lastSync:"Última sincronização", refresh:"Atualizar", refreshing:"A atualizar…",
+    noFaults:"Nenhuma falha detetada", lastSync:"Última sincronização", refresh:"Atualizar", refreshing:"A atualizar…",
     connected:"Central ligada", disconnected:"Central indisponível", codeTitle:"Código / PIN", codePlaceholder:"Introduzir código",
-    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Clique para ver detalhes", settingsDisplay:"Visualização avançada",
+    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Clique para ver detalhes", settingsDisplay:"Visualização avançada", keypadClear:"Limpar", keypadBackspace:"Voltar",
     resetBatteryEntity:"Botão de reposição das pilhas", resetAlarmEntity:"Botão de reposição do alarme", resetLinkEntity:"Botão de reposição da ligação de rádio"
   }
 };
@@ -275,7 +275,6 @@ class SomfyProtexialCardEditor extends HTMLElement {
       const checkDefs = [
         ["auto_detect", "automaticDetection", cfg.auto_detect !== false],
         ["show_faults", "showFaults", cfg.show_faults !== false],
-        ["show_pauses", "showPauses", cfg.show_pauses !== false],
         ["show_last_sync", "showLastSync", cfg.show_last_sync !== false],
         ["show_refresh", "showRefresh", cfg.show_refresh !== false],
         ["compact", "compactMode", cfg.compact === true],
@@ -388,7 +387,7 @@ class SomfyProtexialCard extends HTMLElement {
       alarm_entity: "alarm_control_panel.alarme",
       sensors: SENSORS_DEF.map(sensor => sensor.key),
       labels: {}, entities: {}, title: "",
-      auto_detect: true, show_faults: true, show_pauses: true, show_last_sync: true, show_refresh: true, compact: false,
+      auto_detect: true, show_faults: true, show_last_sync: true, show_refresh: true, compact: false,
     };
   }
 
@@ -405,7 +404,6 @@ class SomfyProtexialCard extends HTMLElement {
       title: config.title || "",
       auto_detect: config.auto_detect !== false,
       show_faults: config.show_faults !== false,
-      show_pauses: config.show_pauses !== false,
       show_last_sync: config.show_last_sync !== false,
       show_refresh: config.show_refresh !== false,
       compact: config.compact === true,
@@ -474,14 +472,6 @@ class SomfyProtexialCard extends HTMLElement {
     if (this.config.refresh_entity) return this.config.refresh_entity;
     if (!this.config.auto_detect) return "";
     return this._findByAliases("button", ["actualiser", "actualisation", "rafraichir", "rafraîchir", "refresh", "synchroniser", "synchronisation", "sync"]);
-  }
-
-  _pauseSwitches() {
-    if (!this.config.show_pauses) return [];
-    return this._allSomfyEntities("switch").filter(entity => {
-      const haystack = `${entity.entity_id} ${entity.attributes?.friendly_name || ""}`.toLowerCase();
-      return haystack.includes("pause") || haystack.includes("(pause)") || haystack.includes("paused");
-    });
   }
 
   _faultEntities() {
@@ -647,7 +637,6 @@ class SomfyProtexialCard extends HTMLElement {
     const activeSensors = SENSORS_DEF.filter(sensor => this.config.sensors.includes(sensor.key));
     const resets = RESET_DEF.map(reset => ({ ...reset, entityId: this._resolveReset(reset) })).filter(reset => this._getState(reset.entityId));
     const faultEntities = this._faultEntities();
-    const pauses = this._pauseSwitches();
     const refreshEntity = this._findRefresh();
     const lastSyncText = this._lastSyncText();
     const connectionOk = this._connectionOk();
@@ -688,18 +677,17 @@ class SomfyProtexialCard extends HTMLElement {
         .section + .section { border-top:1px solid var(--divider-color); }
         .section-head { display:flex; align-items:center; margin-bottom:6px; }
         .section-head .section-title { margin:0; }
-        .sensor-row, .fault-row, .pause-row { display:flex; align-items:center; gap:12px; padding:${this.config.compact ? "7px 0" : "10px 0"}; border-bottom:1px solid var(--divider-color); cursor:pointer; }
-        .sensor-row:last-child, .fault-row:last-child, .pause-row:last-child { border-bottom:none; }
-        .sensor-row:hover, .fault-row:hover, .pause-row:hover { background:color-mix(in srgb, var(--primary-color) 5%, transparent); }
+        .sensor-row, .fault-row { display:flex; align-items:center; gap:12px; padding:${this.config.compact ? "7px 0" : "10px 0"}; border-bottom:1px solid var(--divider-color); cursor:pointer; }
+        .sensor-row:last-child, .fault-row:last-child { border-bottom:none; }
+        .sensor-row:hover, .fault-row:hover { background:color-mix(in srgb, var(--primary-color) 5%, transparent); }
         .sensor-icon, .fault-icon { --mdc-icon-size:22px; color:var(--secondary-text-color); flex-shrink:0; }
         .fault-icon { color:#ef4444; }
-        .sensor-label, .fault-info, .pause-info { flex:1; min-width:0; font-size:14px; color:var(--primary-text-color); }
-        .fault-name, .pause-name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .fault-state, .pause-state { font-size:11px; color:var(--secondary-text-color); margin-top:2px; }
+        .sensor-label, .fault-info { flex:1; min-width:0; font-size:14px; color:var(--primary-text-color); }
+        .fault-name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .fault-state { font-size:11px; color:var(--secondary-text-color); margin-top:2px; }
         .sensor-status { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; text-align:right; }
         .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
         .ok-box { display:flex; align-items:center; gap:8px; color:#22c55e; font-size:13px; padding:8px 0; }
-        .pause-action { border:1px solid var(--divider-color); background:var(--secondary-background-color); color:var(--primary-text-color); border-radius:8px; min-height:32px; padding:0 9px; cursor:pointer; font-weight:600; }
         .reset-grid { display:grid; grid-template-columns:repeat(${Math.max(1, Math.min(3, resets.length))}, minmax(0, 1fr)); gap:8px; }
         .reset-btn { min-width:0; width:100%; min-height:42px; padding:6px 8px; background:var(--secondary-background-color); color:var(--primary-text-color); border:1px solid var(--divider-color); white-space:normal; }
         .footer { display:flex; align-items:center; gap:10px; padding:7px 16px; border-top:1px solid var(--divider-color); color:var(--disabled-color); font-size:10px; }
@@ -710,7 +698,70 @@ class SomfyProtexialCard extends HTMLElement {
         .modal { width:min(380px, 100%); background:var(--ha-card-background, var(--card-background-color)); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.35); padding:20px; color:var(--primary-text-color); }
         .modal-title { font-size:18px; font-weight:700; margin-bottom:10px; }
         .modal-message { font-size:14px; color:var(--secondary-text-color); margin-bottom:14px; }
-        .modal input { width:100%; box-sizing:border-box; padding:12px; border:1px solid var(--divider-color); border-radius:8px; background:var(--primary-background-color); color:var(--primary-text-color); font-size:16px; }
+        .pin-entry { display:none; }
+        .pin-entry.open { display:block; }
+
+        .pin-display {
+          min-height:50px;
+          box-sizing:border-box;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding:10px 14px;
+          margin-bottom:14px;
+          border:1px solid var(--divider-color);
+          border-radius:10px;
+          background:var(--primary-background-color);
+          color:var(--primary-text-color);
+          font-size:24px;
+          font-weight:700;
+          letter-spacing:7px;
+          outline:none;
+          user-select:none;
+        }
+        .pin-display:focus {
+          border-color:var(--primary-color);
+          box-shadow:0 0 0 1px var(--primary-color);
+        }
+        .pin-placeholder {
+          color:var(--secondary-text-color);
+          font-size:13px;
+          font-weight:400;
+          letter-spacing:0;
+        }
+
+        .pin-keypad {
+          display:grid;
+          grid-template-columns:repeat(3, minmax(0, 1fr));
+          gap:9px;
+        }
+        .pin-key {
+          height:52px;
+          border:1px solid var(--divider-color);
+          border-radius:12px;
+          background:var(--secondary-background-color);
+          color:var(--primary-text-color);
+          font:600 20px var(--primary-font-family, sans-serif);
+          cursor:pointer;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          transition:background .15s ease, transform .08s ease;
+          -webkit-tap-highlight-color:transparent;
+        }
+        .pin-key:hover {
+          background:color-mix(in srgb, var(--primary-color) 8%, var(--secondary-background-color));
+        }
+        .pin-key:active {
+          transform:scale(.96);
+        }
+        .pin-key-action {
+          color:var(--secondary-text-color);
+        }
+        .pin-key-action ha-icon {
+          --mdc-icon-size:22px;
+        }
+
         .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
         .modal-actions button { min-height:36px; border-radius:8px; padding:0 14px; border:0; cursor:pointer; font-weight:600; }
         .secondary { background:var(--secondary-background-color); color:var(--primary-text-color); }
@@ -770,15 +821,6 @@ class SomfyProtexialCard extends HTMLElement {
           </div>`).join("") : `<div class="ok-box"><ha-icon icon="mdi:check-circle"></ha-icon>${tr(this._hass, "noFaults")}</div>`}
         </div>` : ""}
 
-        ${this.config.show_pauses && pauses.length ? `<div class="section">
-          <div class="section-head"><div class="section-title">${tr(this._hass, "equipmentTitle")}</div></div>
-          ${pauses.map(entity => `<div class="pause-row" data-more-info="${entity.entity_id}">
-            <ha-icon class="sensor-icon" icon="${entity.state === "off" ? "mdi:pause-circle" : "mdi:play-circle-outline"}"></ha-icon>
-            <div class="pause-info"><div class="pause-name">${this._formatName(entity, "equipmentTitle")}</div><div class="pause-state">${entity.state === "off" ? tr(this._hass, "paused") : tr(this._hass, "active")}</div></div>
-            <button class="pause-action" data-toggle-switch="${entity.entity_id}">${entity.state === "off" ? tr(this._hass, "resume") : tr(this._hass, "pause")}</button>
-          </div>`).join("")}
-        </div>` : ""}
-
         ${resets.length ? `<div class="section">
           <div class="section-head"><div class="section-title">${tr(this._hass, "resetsTitle")}</div></div>
           <div class="reset-grid">${resets.map(reset => `<button class="btn reset-btn" data-reset-key="${reset.key}" data-entity-id="${reset.entityId}"><ha-icon icon="${reset.icon}"></ha-icon><span>${tr(this._hass, reset.text)}</span></button>`).join("")}</div>
@@ -794,7 +836,43 @@ class SomfyProtexialCard extends HTMLElement {
         <div class="modal">
           <div class="modal-title" id="modal-title"></div>
           <div class="modal-message" id="modal-message"></div>
-          <input id="modal-input" type="password" autocomplete="current-password">
+
+          <div class="pin-entry" id="pin-entry">
+            <div
+              class="pin-display"
+              id="pin-display"
+              tabindex="0"
+              role="textbox"
+              aria-label="${tr(this._hass, "codeTitle")}"
+              aria-readonly="true">
+              <span class="pin-placeholder">${tr(this._hass, "codePlaceholder")}</span>
+            </div>
+
+            <div class="pin-keypad" id="pin-keypad">
+              ${[1,2,3,4,5,6,7,8,9].map(number => `
+                <button type="button" class="pin-key" data-pin-key="${number}">${number}</button>
+              `).join("")}
+
+              <button
+                type="button"
+                class="pin-key pin-key-action"
+                data-pin-clear
+                title="${tr(this._hass, "keypadClear")}">
+                <ha-icon icon="mdi:close-circle-outline"></ha-icon>
+              </button>
+
+              <button type="button" class="pin-key" data-pin-key="0">0</button>
+
+              <button
+                type="button"
+                class="pin-key pin-key-action"
+                data-pin-backspace
+                title="${tr(this._hass, "keypadBackspace")}">
+                <ha-icon icon="mdi:backspace-outline"></ha-icon>
+              </button>
+            </div>
+          </div>
+
           <div class="modal-actions">
             <button class="secondary" data-modal-cancel>${tr(this._hass, "cancel")}</button>
             <button class="primary" data-modal-confirm>${tr(this._hass, "confirm")}</button>
@@ -814,12 +892,6 @@ class SomfyProtexialCard extends HTMLElement {
     this.shadowRoot.querySelectorAll("[data-reset-key]").forEach(button => {
       button.addEventListener("click", () => this._callReset(button.dataset.resetKey, button.dataset.entityId));
     });
-    this.shadowRoot.querySelectorAll("[data-toggle-switch]").forEach(button => {
-      button.addEventListener("click", event => {
-        event.stopPropagation();
-        this._togglePause(button.dataset.toggleSwitch);
-      });
-    });
     const refresh = this.shadowRoot.querySelector("[data-refresh]");
     if (refresh) refresh.addEventListener("click", () => this._refresh(refreshEntity));
   }
@@ -829,34 +901,149 @@ class SomfyProtexialCard extends HTMLElement {
       const modal = this.shadowRoot.getElementById("modal");
       const titleEl = this.shadowRoot.getElementById("modal-title");
       const messageEl = this.shadowRoot.getElementById("modal-message");
-      const inputEl = this.shadowRoot.getElementById("modal-input");
+      const pinEntry = this.shadowRoot.getElementById("pin-entry");
+      const pinDisplay = this.shadowRoot.getElementById("pin-display");
       const confirmBtn = modal.querySelector("[data-modal-confirm]");
       const cancelBtn = modal.querySelector("[data-modal-cancel]");
+
+      let pinValue = "";
+
       titleEl.textContent = title;
       messageEl.textContent = message;
       messageEl.style.display = message ? "" : "none";
-      inputEl.style.display = input ? "" : "none";
-      inputEl.placeholder = inputPlaceholder;
-      inputEl.value = "";
+      pinEntry.classList.toggle("open", input);
       confirmBtn.textContent = confirmText || tr(this._hass, "confirm");
-      modal.classList.add("open");
+
+      const updatePinDisplay = () => {
+        if (!input) return;
+
+        if (!pinValue.length) {
+          pinDisplay.innerHTML = `<span class="pin-placeholder">${inputPlaceholder || tr(this._hass, "codePlaceholder")}</span>`;
+          confirmBtn.disabled = true;
+        } else {
+          pinDisplay.textContent = "•".repeat(pinValue.length);
+          confirmBtn.disabled = false;
+        }
+      };
+
+      const appendDigit = digit => {
+        if (!input || !/^\d$/.test(String(digit))) return;
+
+        // Somfy PINs are normally short. Keep a generous upper limit
+        // so the card remains compatible with other alarm panels.
+        if (pinValue.length >= 12) return;
+
+        pinValue += String(digit);
+        updatePinDisplay();
+      };
+
+      const backspace = () => {
+        if (!input || !pinValue.length) return;
+        pinValue = pinValue.slice(0, -1);
+        updatePinDisplay();
+      };
+
+      const clearPin = () => {
+        if (!input) return;
+        pinValue = "";
+        updatePinDisplay();
+      };
 
       const close = result => {
         modal.classList.remove("open");
+
         confirmBtn.onclick = null;
         cancelBtn.onclick = null;
         modal.onclick = null;
-        inputEl.onkeydown = null;
+        pinDisplay.onkeydown = null;
+
+        modal.querySelectorAll("[data-pin-key]").forEach(button => {
+          button.onclick = null;
+        });
+
+        const clearButton = modal.querySelector("[data-pin-clear]");
+        const backspaceButton = modal.querySelector("[data-pin-backspace]");
+        if (clearButton) clearButton.onclick = null;
+        if (backspaceButton) backspaceButton.onclick = null;
+
+        pinValue = "";
+        updatePinDisplay();
         resolve(result);
       };
-      confirmBtn.onclick = () => close(input ? inputEl.value : true);
-      cancelBtn.onclick = () => close(null);
-      modal.onclick = event => { if (event.target === modal) close(null); };
-      inputEl.onkeydown = event => {
-        if (event.key === "Enter") close(inputEl.value);
-        if (event.key === "Escape") close(null);
+
+      modal.querySelectorAll("[data-pin-key]").forEach(button => {
+        button.onclick = event => {
+          event.preventDefault();
+          appendDigit(button.dataset.pinKey);
+        };
+      });
+
+      const clearButton = modal.querySelector("[data-pin-clear]");
+      if (clearButton) {
+        clearButton.onclick = event => {
+          event.preventDefault();
+          clearPin();
+        };
+      }
+
+      const backspaceButton = modal.querySelector("[data-pin-backspace]");
+      if (backspaceButton) {
+        backspaceButton.onclick = event => {
+          event.preventDefault();
+          backspace();
+        };
+      }
+
+      confirmBtn.onclick = () => {
+        if (input && !pinValue.length) return;
+        close(input ? pinValue : true);
       };
-      if (input) requestAnimationFrame(() => inputEl.focus());
+
+      cancelBtn.onclick = () => close(null);
+
+      modal.onclick = event => {
+        if (event.target === modal) close(null);
+      };
+
+      pinDisplay.onkeydown = event => {
+        if (!input) return;
+
+        if (/^\d$/.test(event.key)) {
+          event.preventDefault();
+          appendDigit(event.key);
+          return;
+        }
+
+        if (event.key === "Backspace") {
+          event.preventDefault();
+          backspace();
+          return;
+        }
+
+        if (event.key === "Delete") {
+          event.preventDefault();
+          clearPin();
+          return;
+        }
+
+        if (event.key === "Enter" && pinValue.length) {
+          event.preventDefault();
+          close(pinValue);
+          return;
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          close(null);
+        }
+      };
+
+      updatePinDisplay();
+      modal.classList.add("open");
+
+      if (input) {
+        requestAnimationFrame(() => pinDisplay.focus());
+      }
     });
   }
 
@@ -906,16 +1093,6 @@ class SomfyProtexialCard extends HTMLElement {
     }
   }
 
-  async _togglePause(entityId) {
-    const entity = this._getState(entityId);
-    if (!entity) return;
-    try {
-      await this._hass.callService("switch", entity.state === "on" ? "turn_off" : "turn_on", {}, { entity_id: entityId });
-    } catch (error) {
-      console.error("Somfy Protexial Card pause toggle failed", error);
-    }
-  }
-
   async _refresh(refreshEntity) {
     if (this._refreshing) return;
     this._refreshing = true;
@@ -953,14 +1130,14 @@ class SomfyProtexialCard extends HTMLElement {
   _update() {
     if (!this._hass || !this.shadowRoot.querySelector(".card")) return;
     if (this.shadowRoot.getElementById("modal")?.classList.contains("open")) return;
-    // Dynamic sections can appear/disappear when faults or pause switches change.
+    // Dynamic fault sections can appear/disappear when entity states change.
     this._render();
     this._updateRefreshButton();
   }
 
   getCardSize() {
     const base = this.config?.compact ? 5 : 7;
-    return base + (this.config?.show_faults ? 1 : 0) + (this.config?.show_pauses ? 1 : 0);
+    return base + (this.config?.show_faults ? 1 : 0);
   }
 }
 
@@ -974,6 +1151,1073 @@ if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
     type: "somfy-protexial-card",
     name: "Somfy Protexial Card",
     description: "Multilingual card for Somfy Protexial and Protexiom alarm systems",
+    configurable: true,
+  });
+}
+
+/* Somfy Protexial Elements Card */
+const ELEMENTS_CARD_VERSION = "v2.1.1";
+
+const ELEMENTS_TRANSLATIONS = {
+  fr: {
+    battery:"Batterie", link:"Liaison", house:"Défaut", tamper:"Arrachement", door:"Ouverture", state:"État", zone:"Zone",
+    openings:"Ouvertures", motion:"Mouvements", technical:"Technique", control:"Centrale", sirens:"Sirènes", keypads:"Claviers",
+    remotes:"Télécommandes", badges:"Badges", other:"Autres", total:"Nombre total d’éléments", errors:"Éléments en erreur",
+    allOk:"Tout est OK", fault:"Défaut détecté", unavailable:"Indisponible", unknown:"Inconnu", pause:"Pause", reactivate:"Réactiver",
+    pauseTitle:"Mettre l’élément en pause", reactivateTitle:"Réactiver l’élément", loading:"Chargement des éléments…",
+    noDevice:"Sélectionne l’appareil Somfy dans l’éditeur.", noElements:"Aucun élément Somfy avec attributs de diagnostic n’a été trouvé.",
+    device:"Appareil Somfy", title:"Titre", onlyProblems:"Afficher uniquement les équipements en défaut",
+    showEntityId:"Afficher les entity_id", compact:"Mode compact"
+  },
+  en: {
+    battery:"Battery", link:"Link", house:"Fault", tamper:"Tamper", door:"Opening", state:"State", zone:"Zone",
+    openings:"Openings", motion:"Motion", technical:"Technical", control:"Control", sirens:"Sirens", keypads:"Keypads",
+    remotes:"Remotes", badges:"Badges", other:"Other", total:"Total equipment", errors:"Equipment with errors",
+    allOk:"Everything OK", fault:"Fault detected", unavailable:"Unavailable", unknown:"Unknown", pause:"Pause", reactivate:"Reactivate",
+    pauseTitle:"Pause equipment", reactivateTitle:"Reactivate equipment", loading:"Loading equipment…",
+    noDevice:"Select the Somfy device in the editor.", noElements:"No Somfy equipment with diagnostic attributes was found.",
+    device:"Somfy device", title:"Title", onlyProblems:"Show only equipment with faults", showEntityId:"Show entity IDs", compact:"Compact mode"
+  },
+  de: {
+    battery:"Batterie", link:"Verbindung", house:"Fehler", tamper:"Sabotage", door:"Öffnung", state:"Status", zone:"Zone",
+    openings:"Öffnungen", motion:"Bewegung", technical:"Technik", control:"Zentrale", sirens:"Sirenen", keypads:"Tastaturen",
+    remotes:"Fernbedienungen", badges:"Badges", other:"Andere", total:"Anzahl Elemente", errors:"Elemente mit Fehler",
+    allOk:"Alles OK", fault:"Fehler erkannt", unavailable:"Nicht verfügbar", unknown:"Unbekannt", pause:"Pausieren", reactivate:"Reaktivieren",
+    pauseTitle:"Element pausieren", reactivateTitle:"Element reaktivieren", loading:"Elemente werden geladen…",
+    noDevice:"Somfy-Gerät im Editor auswählen.", noElements:"Keine Somfy-Elemente mit Diagnoseattributen gefunden.",
+    device:"Somfy-Gerät", title:"Titel", onlyProblems:"Nur fehlerhafte Geräte anzeigen", showEntityId:"Entity-IDs anzeigen", compact:"Kompaktmodus"
+  },
+  es: {
+    battery:"Batería", link:"Enlace", house:"Fallo", tamper:"Sabotaje", door:"Apertura", state:"Estado", zone:"Zona",
+    openings:"Aperturas", motion:"Movimiento", technical:"Técnico", control:"Central", sirens:"Sirenas", keypads:"Teclados",
+    remotes:"Mandos", badges:"Badges", other:"Otros", total:"Número total de elementos", errors:"Elementos con error",
+    allOk:"Todo OK", fault:"Fallo detectado", unavailable:"No disponible", unknown:"Desconocido", pause:"Pausar", reactivate:"Reactivar",
+    pauseTitle:"Pausar elemento", reactivateTitle:"Reactivar elemento", loading:"Cargando elementos…",
+    noDevice:"Selecciona el dispositivo Somfy en el editor.", noElements:"No se encontraron elementos Somfy con atributos de diagnóstico.",
+    device:"Dispositivo Somfy", title:"Título", onlyProblems:"Mostrar solo equipos con fallos", showEntityId:"Mostrar entity_id", compact:"Modo compacto"
+  },
+  it: {
+    battery:"Batteria", link:"Collegamento", house:"Anomalia", tamper:"Manomissione", door:"Apertura", state:"Stato", zone:"Zona",
+    openings:"Aperture", motion:"Movimento", technical:"Tecnico", control:"Centrale", sirens:"Sirene", keypads:"Tastiere",
+    remotes:"Telecomandi", badges:"Badge", other:"Altri", total:"Numero totale elementi", errors:"Elementi in errore",
+    allOk:"Tutto OK", fault:"Anomalia rilevata", unavailable:"Non disponibile", unknown:"Sconosciuto", pause:"Pausa", reactivate:"Riattiva",
+    pauseTitle:"Metti in pausa l’elemento", reactivateTitle:"Riattiva l’elemento", loading:"Caricamento elementi…",
+    noDevice:"Seleziona il dispositivo Somfy nell’editor.", noElements:"Nessun elemento Somfy con attributi diagnostici trovato.",
+    device:"Dispositivo Somfy", title:"Titolo", onlyProblems:"Mostra solo dispositivi con anomalie", showEntityId:"Mostra entity_id", compact:"Modalità compatta"
+  },
+  nl: {
+    battery:"Batterij", link:"Verbinding", house:"Storing", tamper:"Sabotage", door:"Opening", state:"Status", zone:"Zone",
+    openings:"Openingen", motion:"Beweging", technical:"Techniek", control:"Centrale", sirens:"Sirenes", keypads:"Bedienpanelen",
+    remotes:"Afstandsbedieningen", badges:"Badges", other:"Overige", total:"Totaal aantal elementen", errors:"Elementen met fout",
+    allOk:"Alles OK", fault:"Fout gedetecteerd", unavailable:"Niet beschikbaar", unknown:"Onbekend", pause:"Pauze", reactivate:"Heractiveren",
+    pauseTitle:"Element pauzeren", reactivateTitle:"Element heractiveren", loading:"Elementen laden…",
+    noDevice:"Selecteer het Somfy-apparaat in de editor.", noElements:"Geen Somfy-elementen met diagnostische attributen gevonden.",
+    device:"Somfy-apparaat", title:"Titel", onlyProblems:"Alleen apparaten met fouten tonen", showEntityId:"Entity-ID’s tonen", compact:"Compacte modus"
+  },
+  pt: {
+    battery:"Bateria", link:"Ligação", house:"Falha", tamper:"Violação", door:"Abertura", state:"Estado", zone:"Zona",
+    openings:"Aberturas", motion:"Movimento", technical:"Técnico", control:"Central", sirens:"Sirenes", keypads:"Teclados",
+    remotes:"Comandos", badges:"Crachás", other:"Outros", total:"Número total de elementos", errors:"Elementos com erro",
+    allOk:"Tudo OK", fault:"Falha detetada", unavailable:"Indisponível", unknown:"Desconhecido", pause:"Pausa", reactivate:"Reativar",
+    pauseTitle:"Colocar elemento em pausa", reactivateTitle:"Reativar elemento", loading:"A carregar elementos…",
+    noDevice:"Selecione o dispositivo Somfy no editor.", noElements:"Nenhum elemento Somfy com atributos de diagnóstico foi encontrado.",
+    device:"Dispositivo Somfy", title:"Título", onlyProblems:"Mostrar apenas equipamentos com falhas", showEntityId:"Mostrar entity_id", compact:"Modo compacto"
+  }
+};
+
+function elementsLanguage(hass) {
+  const language = (hass?.locale?.language || hass?.language || navigator.language || "en").toLowerCase().split("-")[0];
+  return ELEMENTS_TRANSLATIONS[language] ? language : "en";
+}
+
+function et(hass, key) {
+  const lang = elementsLanguage(hass);
+  return ELEMENTS_TRANSLATIONS[lang]?.[key] || ELEMENTS_TRANSLATIONS.en[key] || key;
+}
+
+const ELEMENT_ATTRS = [
+  { key: "Battery", tkey: "battery", fr: "Batterie", en: "Battery", icon: "mdi:battery", ok: ["ok"] },
+  { key: "Link", tkey: "link", fr: "Liaison", en: "Link", icon: "mdi:radio-tower", ok: ["connected"] },
+  { key: "House", tkey: "house", fr: "Défaut", en: "House", icon: "mdi:home-alert", ok: ["ok"] },
+  { key: "Tamper", tkey: "tamper", fr: "Arrachement", en: "Tamper", icon: "mdi:shield-alert", ok: ["ok"] },
+  { key: "Door open", tkey: "door", fr: "Ouverture", en: "Door", icon: "mdi:door", ok: ["closed"] },
+  { key: "Running", tkey: "state", fr: "État", en: "State", icon: "mdi:pause-circle-outline", ok: ["running"] },
+  { key: "Zone", tkey: "zone", fr: "Zone", en: "Zone", icon: "mdi:map-marker-radius", neutral: true },
+];
+
+const ELEMENT_CATEGORIES = [
+  { key: "opening", tkey:"openings", fr: "Ouvertures", en: "Openings", icon: "mdi:door-open" },
+  { key: "motion", tkey:"motion", fr: "Mouvements", en: "Motion", icon: "mdi:motion-sensor" },
+  { key: "technical", tkey:"technical", fr: "Technique", en: "Technical", icon: "mdi:cog-outline" },
+];
+
+const TECHNICAL_SUBCATEGORIES = [
+  { key: "control", tkey:"control", fr: "Centrale", en: "Control", icon: "mdi:shield-home-outline" },
+  { key: "siren", tkey:"sirens", fr: "Sirènes", en: "Sirens", icon: "mdi:bullhorn" },
+  { key: "keypad", tkey:"keypads", fr: "Claviers", en: "Keypads", icon: "mdi:dialpad" },
+  { key: "remote", tkey:"remotes", fr: "Télécommandes", en: "Remotes", icon: "mdi:remote" },
+  { key: "badge", tkey:"badges", fr: "Badges", en: "Badges", icon: "mdi:key-variant" },
+  { key: "other", tkey:"other", fr: "Autres", en: "Other", icon: "mdi:dots-horizontal-circle-outline" },
+];
+
+function spLang(hass) { return elementsLanguage(hass); }
+
+function spMoreInfo(el, entityId) {
+  el.dispatchEvent(new CustomEvent("hass-more-info", {
+    detail: { entityId }, bubbles: true, composed: true
+  }));
+}
+
+class SomfyProtexialElementsCardEditor extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._hass = null;
+    this._config = {};
+    this._built = false;
+    this._language = null;
+  }
+
+  set hass(hass) {
+    const newLanguage = elementsLanguage(hass);
+    const languageChanged =
+      this._language &&
+      this._language !== newLanguage;
+
+    this._hass = hass;
+    this._language = newLanguage;
+
+    if (!this._built || languageChanged) {
+      this._render();
+    }
+  }
+
+  setConfig(config) {
+    this._config = { ...config };
+
+    if (!this._built) {
+      this._render();
+    }
+  }
+
+  _fire(config) {
+    this._config = config;
+    this.dispatchEvent(new CustomEvent("config-changed", {
+      detail: { config },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  _formData() {
+    return {
+      device_id: this._config.device_id || "",
+      title: this._config.title || "",
+      only_problems: this._config.only_problems === true,
+      show_entity_id: this._config.show_entity_id === true,
+      compact: this._config.compact === true,
+    };
+  }
+
+  _render() {
+    if (!this._hass) return;
+
+    this._built = true;
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host { display:block; }
+        ha-form { display:block; }
+      </style>
+      <ha-form id="form"></ha-form>
+    `;
+
+    const form = this.shadowRoot.getElementById("form");
+    form.hass = this._hass;
+    form.schema = [
+      { name: "device_id", selector: { device: {} } },
+      { name: "title", selector: { text: {} } },
+      { name: "only_problems", selector: { boolean: {} } },
+      { name: "show_entity_id", selector: { boolean: {} } },
+      { name: "compact", selector: { boolean: {} } },
+    ];
+    form.data = this._formData();
+
+    form.computeLabel = field => {
+      const labels = {
+        device_id: et(this._hass, "device"),
+        title: et(this._hass, "title"),
+        only_problems: et(this._hass, "onlyProblems"),
+        show_entity_id: et(this._hass, "showEntityId"),
+        compact: et(this._hass, "compact"),
+      };
+      return labels[field.name] || field.name;
+    };
+
+    form.addEventListener("value-changed", event => {
+      event.stopPropagation();
+
+      const newConfig = {
+        ...this._config,
+        ...(event.detail?.value || {}),
+      };
+
+      this._fire(newConfig);
+    });
+  }
+}
+
+if (!customElements.get("somfy-protexial-elements-card-editor")) {
+  customElements.define("somfy-protexial-elements-card-editor", SomfyProtexialElementsCardEditor);
+}
+
+class SomfyProtexialElementsCard extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._entityRegistry = null;
+    this._registryLoading = false;
+    this._loadedDevice = null;
+
+    // Preserve collapsed/open sections across Home Assistant state updates.
+    this._collapsedGroups = new Set();
+    this._collapsedSubgroups = new Set();
+  }
+
+  static getConfigElement() {
+    return document.createElement("somfy-protexial-elements-card-editor");
+  }
+
+  static getStubConfig() {
+    return {
+      device_id: "",
+      title: "",
+      only_problems: false,
+      show_entity_id: false,
+      compact: false,
+    };
+  }
+
+  setConfig(config) {
+    if (!config) throw new Error("Invalid configuration");
+    this.config = {
+      device_id: config.device_id || "",
+      title: config.title || "",
+      only_problems: config.only_problems === true,
+      show_entity_id: config.show_entity_id === true,
+      compact: config.compact === true,
+    };
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+
+    if (this.config?.device_id &&
+        this._loadedDevice !== this.config.device_id &&
+        !this._registryLoading) {
+      this._loadRegistry();
+      return;
+    }
+
+    this._render();
+  }
+
+  _lang() { return spLang(this._hass); }
+  _t(fr, en) { return this._lang() === "fr" ? fr : en; }
+
+  async _loadRegistry() {
+    if (!this._hass || !this.config?.device_id || this._registryLoading) return;
+
+    this._registryLoading = true;
+
+    try {
+      const registry = await this._hass.callWS({
+        type: "config/entity_registry/list",
+      });
+
+      this._entityRegistry = Array.isArray(registry) ? registry : [];
+      this._loadedDevice = this.config.device_id;
+    } catch (error) {
+      console.error("Somfy Protexial Elements Card: entity registry error", error);
+      this._entityRegistry = [];
+      this._loadedDevice = this.config.device_id;
+    } finally {
+      this._registryLoading = false;
+      this._render();
+    }
+  }
+
+  _deviceEntityIds() {
+    if (!this.config?.device_id || !Array.isArray(this._entityRegistry)) return [];
+
+    return this._entityRegistry
+      .filter(entry => entry?.device_id === this.config.device_id)
+      .map(entry => entry.entity_id)
+      .filter(Boolean);
+  }
+
+  _isElementSensor(entity) {
+    if (!entity?.entity_id?.startsWith("binary_sensor.")) return false;
+
+    const attrs = entity.attributes || {};
+
+    // Real attributes exposed by SomfyElementAggregateBinarySensor.
+    const diagnosticKeys = [
+      "Battery",
+      "Link",
+      "House",
+      "Tamper",
+      "Door open",
+      "Running",
+    ];
+
+    return diagnosticKeys.some(key =>
+      Object.prototype.hasOwnProperty.call(attrs, key)
+    );
+  }
+
+  _elements() {
+    if (!this.config?.device_id) return [];
+
+    const ids = new Set(this._deviceEntityIds());
+
+    let elements = [...ids]
+      .map(entityId => this._hass?.states?.[entityId])
+      .filter(entity => this._isElementSensor(entity));
+
+    // Safe fallback: if registry resolution fails for some frontend/version,
+    // use only entities exposing the very specific Somfy per-element attributes.
+    if (!elements.length && this._entityRegistry !== null) {
+      elements = Object.values(this._hass?.states || {})
+        .filter(entity => this._isElementSensor(entity));
+    }
+
+    return elements
+      .filter(entity => !this.config.only_problems || entity.state === "on")
+      .sort((a, b) => this._name(a).localeCompare(this._name(b)));
+  }
+
+  _mainCategory(entity) {
+    const attrs = entity.attributes || {};
+    const icon = String(attrs.icon || "").toLowerCase();
+    const entityId = entity.entity_id.toLowerCase();
+
+    // Icon is preferred because it is generated from the Somfy hardware type.
+    if (
+      icon.includes("door") ||
+      icon.includes("window") ||
+      icon.includes("garage")
+    ) return "opening";
+
+    if (icon.includes("motion-sensor")) return "motion";
+
+    // Smoke, remotes, keypads, sirens, badges and transmitters are technical.
+    return "technical";
+  }
+
+  _technicalSubcategory(entity) {
+    const attrs = entity.attributes || {};
+    const icon = String(attrs.icon || "").toLowerCase();
+    const zone = String(attrs.Zone || "").toUpperCase();
+
+    // Order does not matter here; rendering order is defined by
+    // TECHNICAL_SUBCATEGORIES.
+    if (icon.includes("bullhorn") || icon.includes("home-sound")) {
+      return "siren";
+    }
+
+    if (icon.includes("dialpad") || icon.includes("keyboard")) {
+      return "keypad";
+    }
+
+    // Remotes must be kept separate from the control / transmitter group.
+    if (icon.includes("remote")) {
+      return "remote";
+    }
+
+    if (icon.includes("key-variant") || icon.includes("key-alert")) {
+      return "badge";
+    }
+
+    // Central / transmitter equipment. The integration uses alpha-s-box
+    // icons for transmitter-type technical elements, while SYS identifies
+    // system-level equipment.
+    if (icon.includes("alpha-s-box") || zone === "SYS") {
+      return "control";
+    }
+
+    return "other";
+  }
+
+  _groups() {
+    const groups = {
+      opening: [],
+      motion: [],
+      technical: {
+        control: [],
+        siren: [],
+        keypad: [],
+        remote: [],
+        badge: [],
+        other: [],
+      },
+    };
+
+    for (const entity of this._elements()) {
+      const main = this._mainCategory(entity);
+
+      if (main === "technical") {
+        groups.technical[this._technicalSubcategory(entity)].push(entity);
+      } else {
+        groups[main].push(entity);
+      }
+    }
+
+    return groups;
+  }
+
+
+
+  _name(entity) {
+    try {
+      return this._hass.formatEntityName(entity) ||
+        entity.attributes?.friendly_name ||
+        entity.entity_id;
+    } catch (_) {
+      return entity.attributes?.friendly_name || entity.entity_id;
+    }
+  }
+
+  _stateLabel(entity) {
+    if (entity.state === "on") return et(this._hass, "fault");
+    if (entity.state === "off") return et(this._hass, "allOk");
+    if (entity.state === "unavailable") return et(this._hass, "unavailable");
+    return et(this._hass, "unknown");
+  }
+
+  _human(value) {
+    const v = String(value ?? "");
+    const n = v.toLowerCase();
+
+    const values = {
+      fr: {
+        ok: "OK",
+        low: "Faible",
+        connected: "Connectée",
+        disconnected: "Déconnectée",
+        "domestic fault/intrusion": "Défaut / intrusion",
+        "open/ripped off": "Ouvert / arraché",
+        closed: "Fermée",
+        open: "Ouverte",
+        running: "Actif",
+        paused: "En pause",
+      },
+      en: {
+        ok: "OK",
+        low: "Low",
+        connected: "Connected",
+        disconnected: "Disconnected",
+        "domestic fault/intrusion": "Fault / intrusion",
+        "open/ripped off": "Open / ripped off",
+        closed: "Closed",
+        open: "Open",
+        running: "Active",
+        paused: "Paused",
+      },
+      de: {
+        ok: "OK",
+        low: "Schwach",
+        connected: "Verbunden",
+        disconnected: "Getrennt",
+        "domestic fault/intrusion": "Fehler / Einbruch",
+        "open/ripped off": "Offen / abgerissen",
+        closed: "Geschlossen",
+        open: "Offen",
+        running: "Aktiv",
+        paused: "Pausiert",
+      },
+      es: {
+        ok: "OK",
+        low: "Baja",
+        connected: "Conectado",
+        disconnected: "Desconectado",
+        "domestic fault/intrusion": "Fallo / intrusión",
+        "open/ripped off": "Abierto / arrancado",
+        closed: "Cerrado",
+        open: "Abierto",
+        running: "Activo",
+        paused: "En pausa",
+      },
+      it: {
+        ok: "OK",
+        low: "Bassa",
+        connected: "Connesso",
+        disconnected: "Disconnesso",
+        "domestic fault/intrusion": "Anomalia / intrusione",
+        "open/ripped off": "Aperto / strappato",
+        closed: "Chiuso",
+        open: "Aperto",
+        running: "Attivo",
+        paused: "In pausa",
+      },
+      nl: {
+        ok: "OK",
+        low: "Laag",
+        connected: "Verbonden",
+        disconnected: "Niet verbonden",
+        "domestic fault/intrusion": "Storing / inbraak",
+        "open/ripped off": "Open / losgetrokken",
+        closed: "Gesloten",
+        open: "Open",
+        running: "Actief",
+        paused: "Gepauzeerd",
+      },
+      pt: {
+        ok: "OK",
+        low: "Fraca",
+        connected: "Ligado",
+        disconnected: "Desligado",
+        "domestic fault/intrusion": "Falha / intrusão",
+        "open/ripped off": "Aberto / arrancado",
+        closed: "Fechado",
+        open: "Aberto",
+        running: "Ativo",
+        paused: "Em pausa",
+      },
+    };
+
+    const lang = this._lang();
+    return values[lang]?.[n] ?? values.en[n] ?? v;
+  }
+
+  _ok(def, value) {
+    if (def.neutral) return true;
+    return (def.ok || []).includes(String(value ?? "").toLowerCase());
+  }
+
+  _registryEntry(entityId) {
+    if (!entityId || !Array.isArray(this._entityRegistry)) return null;
+    return this._entityRegistry.find(entry => entry?.entity_id === entityId) || null;
+  }
+
+  _normalizeElementObjectId(entityId) {
+    if (!entityId) return "";
+
+    let objectId = String(entityId).split(".")[1] || "";
+
+    // Remove integration prefixes that can differ between installations.
+    objectId = objectId
+      .replace(/^somfy_protexial_/, "")
+      .replace(/^somfy_protexiom_/, "");
+
+    // Remove role suffixes.
+    objectId = objectId
+      .replace(/_aggregate$/, "")
+      .replace(/_actif$/, "")
+      .replace(/_active$/, "")
+      .replace(/_pause$/, "");
+
+    return objectId;
+  }
+
+  _pauseSwitchForElement(entity) {
+    if (!entity?.entity_id || !this._hass) return null;
+
+    const elementKey = this._normalizeElementObjectId(entity.entity_id);
+    if (!elementKey) return null;
+
+    // Search only switches attached to the selected Somfy device when possible.
+    const deviceIds = new Set(this._deviceEntityIds());
+
+    const switches = Object.values(this._hass.states || {}).filter(state => {
+      if (!state?.entity_id?.startsWith("switch.")) return false;
+
+      // If the registry gave us the device's entities, restrict matching to it.
+      if (deviceIds.size && !deviceIds.has(state.entity_id)) return false;
+
+      return true;
+    });
+
+    // 1) Exact normalized technical-name match.
+    const exact = switches.find(state =>
+      this._normalizeElementObjectId(state.entity_id) === elementKey
+    );
+    if (exact) return exact;
+
+    // 2) Fallback: known switch naming convention:
+    // switch.somfy_protexial_<element>_actif
+    const expectedSuffixes = [
+      `_${elementKey}_actif`,
+      `_${elementKey}_active`,
+      `_${elementKey}_pause`,
+    ];
+
+    const fallback = switches.find(state => {
+      const objectId = state.entity_id.split(".")[1] || "";
+      return expectedSuffixes.some(suffix => objectId.endsWith(suffix));
+    });
+
+    return fallback || null;
+  }
+
+  async _togglePauseSwitch(entityId) {
+    const pauseSwitch = this._hass?.states?.[entityId];
+    if (!pauseSwitch) return;
+
+    // IMPORTANT:
+    // ON  = element active  -> turn_off to pause
+    // OFF = element paused  -> turn_on to reactivate
+    const service = pauseSwitch.state === "on" ? "turn_off" : "turn_on";
+
+    try {
+      await this._hass.callService(
+        "switch",
+        service,
+        {},
+        { entity_id: entityId }
+      );
+    } catch (error) {
+      console.error(
+        "Somfy Protexial Elements Card: pause action failed",
+        entityId,
+        error
+      );
+    }
+  }
+
+  _renderElement(entity) {
+    const attrs = entity.attributes || {};
+    const problem = entity.state === "on";
+    const defs = ELEMENT_ATTRS.filter(def =>
+      Object.prototype.hasOwnProperty.call(attrs, def.key)
+    );
+    const icon = attrs.icon ||
+      (problem ? "mdi:alert-circle-outline" : "mdi:check-circle-outline");
+
+    const pauseSwitch = this._pauseSwitchForElement(entity);
+    const active = pauseSwitch?.state === "on";
+    const paused = pauseSwitch?.state === "off";
+
+    return `
+      <div class="element">
+        <div class="head" data-more-info="${entity.entity_id}">
+          <ha-icon class="main-icon ${problem ? "problem" : "ok"}" icon="${icon}"></ha-icon>
+          <div class="info">
+            <div class="name">${this._name(entity)}</div>
+            ${this.config.show_entity_id
+              ? `<div class="entity-id">${entity.entity_id}</div>`
+              : ""}
+          </div>
+          <div class="summary ${problem ? "problem" : "ok"}">
+            ${this._stateLabel(entity)}
+          </div>
+          ${pauseSwitch ? `
+            <button
+              type="button"
+              class="pause-button ${paused ? "paused" : "active"}"
+              data-pause-switch="${pauseSwitch.entity_id}"
+              title="${active
+                ? et(this._hass, "pauseTitle")
+                : et(this._hass, "reactivateTitle")}">
+              <ha-icon icon="${active ? "mdi:pause" : "mdi:play"}"></ha-icon>
+              <span>${active
+                ? et(this._hass, "pause")
+                : et(this._hass, "reactivate")}</span>
+            </button>` : ""}
+        </div>
+        <div class="attrs">
+          ${defs.map(def => {
+            const value = attrs[def.key];
+            const ok = this._ok(def, value);
+            return `
+              <div class="attr">
+                <ha-icon icon="${def.icon}"></ha-icon>
+                <div class="attr-info">
+                  <div class="attr-label">${et(this._hass, def.tkey)}</div>
+                  <div class="attr-value ${def.neutral ? "neutral" : ok ? "ok" : "problem"}">
+                    ${this._human(value)}
+                  </div>
+                </div>
+              </div>`;
+          }).join("")}
+        </div>
+      </div>`;
+  }
+
+  _renderGroup(category, entities) {
+    if (!entities.length) return "";
+
+    return `
+      <div class="group ${this._collapsedGroups.has(category.key) ? "collapsed" : ""}" data-group="${category.key}">
+        <button type="button" class="group-title" data-toggle-group="${category.key}">
+          <ha-icon icon="${category.icon}"></ha-icon>
+          <span class="group-name">${et(this._hass, category.tkey)}</span>
+          <span class="group-count">${entities.length}</span>
+          <ha-icon class="group-chevron" icon="mdi:chevron-down"></ha-icon>
+        </button>
+        <div class="group-content">
+          ${entities.map(entity => this._renderElement(entity)).join("")}
+        </div>
+      </div>`;
+  }
+
+
+  _renderTechnical(groups) {
+    const total = Object.values(groups).reduce((sum, list) => sum + list.length, 0);
+    if (!total) return "";
+
+    const main = ELEMENT_CATEGORIES.find(c => c.key === "technical");
+
+    return `
+      <div class="group ${this._collapsedGroups.has("technical") ? "collapsed" : ""}" data-group="technical">
+        <button type="button" class="group-title" data-toggle-group="technical">
+          <ha-icon icon="${main.icon}"></ha-icon>
+          <span class="group-name">${et(this._hass, main.tkey)}</span>
+          <span class="group-count">${total}</span>
+          <ha-icon class="group-chevron" icon="mdi:chevron-down"></ha-icon>
+        </button>
+
+        <div class="group-content">
+          ${TECHNICAL_SUBCATEGORIES.map(sub => {
+            const items = groups[sub.key] || [];
+            if (!items.length) return "";
+
+            return `
+              <div class="subgroup ${this._collapsedSubgroups.has(sub.key) ? "collapsed" : ""}" data-subgroup="${sub.key}">
+                <button type="button" class="subgroup-title" data-toggle-subgroup="${sub.key}">
+                  <ha-icon icon="${sub.icon}"></ha-icon>
+                  <span class="subgroup-name">${et(this._hass, sub.tkey)}</span>
+                  <span class="group-count">${items.length}</span>
+                  <ha-icon class="subgroup-chevron" icon="mdi:chevron-down"></ha-icon>
+                </button>
+                <div class="subgroup-content">
+                  ${items.map(entity => this._renderElement(entity)).join("")}
+                </div>
+              </div>`;
+          }).join("")}
+        </div>
+      </div>`;
+  }
+
+
+  _render() {
+    if (!this._hass || !this.config) return;
+
+    const elements = this._elements();
+
+    if (this.config.device_id && !this._registryLoading) {
+      console.debug(`[Somfy Protexial Elements Card ${ELEMENTS_CARD_VERSION}]`, {
+        device_id: this.config.device_id,
+        registry_device_entities: this._deviceEntityIds(),
+        detected_elements: elements.map(e => e.entity_id),
+        pause_switches: elements.map(e => {
+          const sw = this._pauseSwitchForElement(e);
+          return {
+            element: e.entity_id,
+            element_key: this._normalizeElementObjectId(e.entity_id),
+            switch: sw?.entity_id || null,
+            state: sw?.state || null,
+          };
+        }),
+      });
+    }
+
+    const title = this.config.title || this._t("Éléments Somfy", "Somfy equipment");
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host { display:block; font-family:var(--primary-font-family,sans-serif); }
+        ha-card { overflow:hidden; }
+        .header { display:flex; align-items:center; gap:12px; padding:${this.config.compact ? "12px" : "16px"}; border-bottom:1px solid var(--divider-color); }
+        .title { flex:1; font-size:16px; font-weight:700; color:var(--primary-text-color); }
+        .count { min-width:26px; height:26px; padding:0 7px; border-radius:13px; display:flex; align-items:center; justify-content:center; background:var(--secondary-background-color); color:var(--secondary-text-color); font-size:11px; font-weight:700; }
+        .header-stats {
+          display:flex;
+          align-items:center;
+          gap:7px;
+        }
+        .stat {
+          height:28px;
+          min-width:38px;
+          box-sizing:border-box;
+          padding:0 8px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:5px;
+          border-radius:14px;
+          background:var(--secondary-background-color);
+          color:var(--secondary-text-color);
+          font-size:11px;
+          font-weight:700;
+        }
+        .stat ha-icon { --mdc-icon-size:15px; }
+        .stat.error {
+          color:var(--error-color,#db4437);
+          background:color-mix(in srgb, var(--error-color,#db4437) 10%, var(--secondary-background-color));
+        }
+        .stat.ok {
+          color:var(--success-color,#43a047);
+        }
+
+        .group {
+          border-bottom:1px solid var(--divider-color);
+        }
+        .group:last-of-type { border-bottom:0; }
+
+        .group-title {
+          width:100%;
+          min-height:42px;
+          box-sizing:border-box;
+          padding:8px 16px;
+          border:0;
+          background:transparent;
+          color:var(--primary-text-color);
+          display:flex;
+          align-items:center;
+          gap:9px;
+          font:inherit;
+          cursor:pointer;
+          text-align:left;
+        }
+        .group-title:hover {
+          background:var(--secondary-background-color);
+        }
+        .group-title > ha-icon:first-child {
+          --mdc-icon-size:19px;
+          color:var(--secondary-text-color);
+        }
+        .group-title .group-name {
+          flex:1;
+          min-width:0;
+          font-size:13px;
+          font-weight:650;
+        }
+        .group-count {
+          min-width:23px;
+          height:23px;
+          padding:0 6px;
+          box-sizing:border-box;
+          border-radius:12px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          background:var(--secondary-background-color);
+          color:var(--secondary-text-color);
+          font-size:10px;
+          font-weight:700;
+        }
+        .group-chevron {
+          --mdc-icon-size:18px;
+          color:var(--secondary-text-color);
+          transition:transform .18s ease;
+        }
+        .group.collapsed > .group-title .group-chevron {
+          transform:rotate(-90deg);
+        }
+        .group.collapsed > .group-content {
+          display:none;
+        }
+
+        .subgroup {
+          padding:0 10px;
+        }
+        .subgroup-title {
+          width:100%;
+          min-height:34px;
+          box-sizing:border-box;
+          padding:5px 8px;
+          border:0;
+          background:transparent;
+          color:var(--secondary-text-color);
+          display:flex;
+          align-items:center;
+          gap:8px;
+          font:inherit;
+          cursor:pointer;
+          text-align:left;
+        }
+        .subgroup-title:hover {
+          background:var(--secondary-background-color);
+          border-radius:8px;
+        }
+        .subgroup-title > ha-icon:first-child {
+          --mdc-icon-size:16px;
+        }
+        .subgroup-title .subgroup-name {
+          flex:1;
+          font-size:11px;
+          font-weight:650;
+        }
+        .subgroup-chevron {
+          --mdc-icon-size:16px;
+          transition:transform .18s ease;
+        }
+        .subgroup.collapsed .subgroup-chevron {
+          transform:rotate(-90deg);
+        }
+        .subgroup.collapsed .subgroup-content {
+          display:none;
+        }
+
+        .element { padding:${this.config.compact ? "10px 12px" : "14px 16px"}; border-bottom:1px solid var(--divider-color); }
+        .element:last-of-type { border-bottom:0; }
+        .head { display:flex; align-items:center; gap:11px; cursor:pointer; }
+        .main-icon { --mdc-icon-size:25px; flex-shrink:0; }
+        .main-icon.ok { color:#22c55e; } .main-icon.problem { color:#ef4444; }
+        .info { flex:1; min-width:0; }
+        .name { font-size:14px; font-weight:650; color:var(--primary-text-color); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .entity-id { font-size:9px; color:var(--disabled-color); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .summary { font-size:11px; font-weight:650; white-space:nowrap; }
+        .summary.ok { color:#22c55e; } .summary.problem { color:#ef4444; }
+
+        .pause-button {
+          min-height:30px;
+          padding:0 9px;
+          border:1px solid var(--divider-color);
+          border-radius:8px;
+          background:var(--secondary-background-color);
+          color:var(--primary-text-color);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:5px;
+          font:inherit;
+          font-size:10px;
+          font-weight:650;
+          cursor:pointer;
+          flex-shrink:0;
+        }
+        .pause-button ha-icon {
+          --mdc-icon-size:16px;
+        }
+        .pause-button.active {
+          color:var(--warning-color,#f59e0b);
+        }
+        .pause-button.paused {
+          color:var(--success-color,#43a047);
+        }
+        .pause-button:hover {
+          background:color-mix(in srgb, var(--primary-color) 7%, var(--secondary-background-color));
+        }
+        .attrs { display:grid; grid-template-columns:repeat(auto-fit,minmax(125px,1fr)); gap:7px; margin-top:11px; }
+        .attr { min-width:0; display:flex; align-items:center; gap:8px; padding:8px 9px; border-radius:8px; background:var(--secondary-background-color); }
+        .attr ha-icon { --mdc-icon-size:18px; color:var(--secondary-text-color); flex-shrink:0; }
+        .attr-info { min-width:0; }
+        .attr-label { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--secondary-text-color); }
+        .attr-value { font-size:11px; font-weight:650; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .attr-value.ok { color:#22c55e; } .attr-value.problem { color:#ef4444; } .attr-value.neutral { color:var(--primary-text-color); }
+        .empty { padding:18px 16px; color:var(--secondary-text-color); font-size:13px; }
+        .footer { padding:6px 12px; text-align:right; border-top:1px solid var(--divider-color); color:var(--disabled-color); font-size:9px; }
+        @media (max-width:500px) {
+          .attrs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+          .head { flex-wrap:wrap; }
+          .pause-button { margin-left:36px; }
+        }
+      </style>
+      <ha-card>
+        <div class="header">
+          <div class="title">${title}</div>
+          <div class="header-stats">
+            <div class="stat" title="${et(this._hass, "total")}">
+              <ha-icon icon="mdi:devices"></ha-icon>
+              <span>${elements.length}</span>
+            </div>
+            <div class="stat ${elements.filter(entity => entity.state === "on").length ? "error" : "ok"}"
+                 title="${et(this._hass, "errors")}">
+              <ha-icon icon="mdi:alert-circle-outline"></ha-icon>
+              <span>${elements.filter(entity => entity.state === "on").length}</span>
+            </div>
+          </div>
+        </div>
+
+        ${this._registryLoading ? `
+          <div class="empty">
+            ${et(this._hass, "loading")}
+          </div>
+        ` : elements.length ? (() => {
+          const groups = this._groups();
+          const opening = ELEMENT_CATEGORIES.find(c => c.key === "opening");
+          const motion = ELEMENT_CATEGORIES.find(c => c.key === "motion");
+
+          return [
+            typeof this._renderGroup === "function" ? this._renderGroup(opening, groups.opening) : "",
+            typeof this._renderGroup === "function" ? this._renderGroup(motion, groups.motion) : "",
+            typeof this._renderTechnical === "function" ? this._renderTechnical(groups.technical) : "",
+          ].join("");
+        })() : `
+          <div class="empty">
+            ${this.config.device_id ? et(this._hass, "noElements") : et(this._hass, "noDevice")}
+          </div>
+        `}
+
+        <div class="footer">Somfy Protexial Elements Card ${ELEMENTS_CARD_VERSION}</div>
+      </ha-card>
+    `;
+
+    this.shadowRoot.querySelectorAll("[data-toggle-group]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+
+        const key = button.dataset.toggleGroup;
+        const group = button.closest(".group");
+        if (!key || !group) return;
+
+        const collapsed = group.classList.toggle("collapsed");
+
+        if (collapsed) {
+          this._collapsedGroups.add(key);
+        } else {
+          this._collapsedGroups.delete(key);
+        }
+      });
+    });
+
+    this.shadowRoot.querySelectorAll("[data-toggle-subgroup]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+
+        const key = button.dataset.toggleSubgroup;
+        const subgroup = button.closest(".subgroup");
+        if (!key || !subgroup) return;
+
+        const collapsed = subgroup.classList.toggle("collapsed");
+
+        if (collapsed) {
+          this._collapsedSubgroups.add(key);
+        } else {
+          this._collapsedSubgroups.delete(key);
+        }
+      });
+    });
+
+    this.shadowRoot.querySelectorAll("[data-pause-switch]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+        this._togglePauseSwitch(button.dataset.pauseSwitch);
+      });
+    });
+
+    this.shadowRoot.querySelectorAll("[data-more-info]").forEach(el => {
+      el.addEventListener("click", () => spMoreInfo(this, el.dataset.moreInfo));
+    });
+  }
+
+  getCardSize() {
+    return Math.max(2, (this._elements()?.length || 0) + 1);
+  }
+}
+
+if (!customElements.get("somfy-protexial-elements-card")) {
+  customElements.define("somfy-protexial-elements-card", SomfyProtexialElementsCard);
+}
+
+window.customCards = window.customCards || [];
+if (!window.customCards.some(c => c.type === "somfy-protexial-elements-card")) {
+  window.customCards.push({
+    type: "somfy-protexial-elements-card",
+    name: "Somfy Protexial Elements Card",
+    description: "Per-element diagnostics for Somfy Protexial / Protexiom",
     configurable: true,
   });
 }
