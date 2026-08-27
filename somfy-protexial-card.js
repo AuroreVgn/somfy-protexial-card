@@ -9,7 +9,7 @@
    Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const CARD_VERSION = "v2.2.1";
+const CARD_VERSION = "v2.2.2";
 
 const ALARM_FEATURES = {
   ARM_HOME: 1,
@@ -1156,7 +1156,7 @@ if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
 }
 
 /* Somfy Protexial Elements Card */
-const ELEMENTS_CARD_VERSION = "v1.4.7";
+const ELEMENTS_CARD_VERSION = "v2.1.2";
 
 const ELEMENTS_TRANSLATIONS = {
   fr: {
