@@ -37,13 +37,10 @@ Carte dédiée aux éléments de l'installation permettant de :
 
 Les deux cartes sont fournies dans **un seul fichier JavaScript** et sont installées automatiquement ensemble via HACS.
 
-Les cartes sont conçues pour fonctionner avec l'intégration :
-
-[**AuroreVgn/somfy-protexial**](https://github.com/AuroreVgn/somfy-protexial).
+Les cartes sont conçues pour fonctionner avec l'intégration : [**AuroreVgn/somfy-protexial**](https://github.com/AuroreVgn/somfy-protexial).
 
 Elles disposent d'un **éditeur graphique**, s'adaptent automatiquement aux thèmes clair et sombre de Home Assistant et prennent en charge plusieurs langues.
 
----
 
 ## ✅ Prérequis
 
@@ -55,7 +52,6 @@ Elles disposent d'un **éditeur graphique**, s'adaptent automatiquement aux thè
 >
 > Les `entity_id` peuvent également être définis manuellement depuis l'éditeur graphique ou le YAML lorsque cette option est proposée.
 
----
 
 ## 📥 Installation
 
@@ -124,7 +120,6 @@ Module JavaScript
 
 Une seule ressource permet là aussi d'utiliser les deux cartes.
 
----
 
 # 🎯 Utilisation
 
@@ -139,7 +134,6 @@ alarm_entity: alarm_control_panel.alarme
 
 Grâce à la **détection automatique**, cette configuration peut suffire dans la majorité des installations.
 
----
 
 ## Configuration complète
 
@@ -185,7 +179,6 @@ labels:
 
 La carte possède un **éditeur graphique intégré**. Il n'est donc normalement pas nécessaire d'éditer le YAML à la main.
 
----
 
 ## 🧩 Somfy Protexial Elements Card
 
@@ -212,8 +205,6 @@ compact: false
 
 Le `device_id` peut être sélectionné directement dans l'éditeur graphique.
 
----
-
 # ✨ Fonctionnalités
 
 ## 🔐 Contrôle de l'alarme
@@ -231,7 +222,6 @@ Les boutons disponibles dépendent automatiquement des fonctions exposées par `
 
 Le bouton **Nuit** n'est affiché que lorsque la centrale le supporte.
 
----
 
 ## 🔑 Code / PIN
 
@@ -241,7 +231,6 @@ Le code n'a pas besoin d'être stocké dans la configuration Lovelace.
 
 Cela évite l'utilisation des fenêtres natives `prompt()` du navigateur et conserve une interface cohérente avec Home Assistant.
 
----
 
 ## 📡 État du système
 
@@ -265,8 +254,6 @@ Les entités peuvent être remplacées individuellement depuis l'éditeur graphi
 
 Un clic sur une ligne ouvre directement la fenêtre **Plus d'informations** native de Home Assistant pour l'entité correspondante.
 
----
-
 ## 🚨 Défauts
 
 La carte principale peut rechercher automatiquement les entités de diagnostic Somfy et afficher les anomalies dans une section dédiée.
@@ -289,8 +276,6 @@ ON  = communication correcte
 OFF = défaut de communication
 ```
 
----
-
 # 🧩 Détail des éléments
 
 La **Somfy Protexial Elements Card** permet d'afficher individuellement les éléments rattachés à la centrale.
@@ -308,8 +293,6 @@ Chaque élément peut exposer les informations suivantes :
 | Zone | `Zone` |
 
 Les informations réellement disponibles dépendent du type d'équipement et de ce que remonte la centrale.
-
----
 
 ## 📂 Classement automatique des éléments
 
@@ -343,8 +326,6 @@ Les équipements techniques sont eux-mêmes classés dans l'ordre suivant :
 
 Les catégories et sous-catégories sont **dépliables et repliables** directement depuis la carte.
 
----
-
 ## 📊 Compteurs des éléments
 
 En haut de la carte, deux indicateurs sont disponibles.
@@ -361,7 +342,6 @@ Exemple :
 
 L'indicateur d'erreur change automatiquement selon l'état des équipements.
 
----
 
 ## ⏸️ Mise en pause des éléments
 
@@ -402,7 +382,6 @@ switch.turn_on
 
 La carte associe automatiquement chaque élément à son switch correspondant.
 
----
 
 ## 🔄 Actualisation
 
@@ -411,8 +390,6 @@ Un bouton **Actualiser** est disponible directement dans l'en-tête de la carte 
 Lorsque l'intégration fournit un bouton d'actualisation / synchronisation, la carte l'utilise automatiquement.
 
 Dans le cas contraire, elle peut utiliser `homeassistant.update_entity` comme solution de secours.
-
----
 
 ## 🕒 Dernière synchronisation
 
@@ -432,7 +409,6 @@ L'état de connexion de la centrale est affiché au-dessus de cette information 
   depuis moins d'une minute ↻
 ```
 
----
 
 ## ♻️ Réinitialisation des défauts
 
@@ -454,7 +430,6 @@ Une confirmation est demandée avant l'exécution.
 
 Les boutons qui n'existent pas dans Home Assistant peuvent être masqués automatiquement.
 
----
 
 ## 🪄 Détection automatique des entités
 
@@ -471,7 +446,6 @@ Une entité définie manuellement dans `entities:` reste toujours prioritaire.
 
 La **Elements Card** utilise quant à elle l'appareil Home Assistant sélectionné dans son éditeur pour retrouver les différents équipements de la centrale.
 
----
 
 ## 📱 Mode compact
 
@@ -494,8 +468,6 @@ compact: true
 
 Le mode compact réduit l'espace utilisé tout en conservant les informations essentielles.
 
----
-
 ## 🎨 Thèmes
 
 Les deux cartes utilisent les variables CSS natives de Home Assistant et s'adaptent automatiquement :
@@ -505,7 +477,6 @@ Les deux cartes utilisent les variables CSS natives de Home Assistant et s'adapt
 - aux couleurs principales du thème
 - aux rayons et ombres des cartes Home Assistant
 
----
 
 # ⚙️ Options de configuration
 
@@ -538,7 +509,6 @@ Les deux cartes utilisent les variables CSS natives de Home Assistant et s'adapt
 
 La configuration de la **Elements Card** peut être réalisée entièrement depuis l'éditeur graphique.
 
----
 
 # 🚦 États de l'alarme
 
@@ -554,7 +524,6 @@ La configuration de la **Elements Card** peut être réalisée entièrement depu
 | `unknown` | Inconnu |
 | `unavailable` | Indisponible |
 
----
 
 # 🌍 Langues
 
@@ -569,22 +538,6 @@ Les deux cartes prennent actuellement en charge :
 - 🇵🇹 Português
 
 La langue est déterminée automatiquement à partir des paramètres Home Assistant / navigateur.
-
----
-
-# 🧩 Intégration associée
-
-Ces cartes sont principalement conçues pour :
-
-👉 [**AuroreVgn/somfy-protexial**](https://github.com/AuroreVgn/somfy-protexial)
-
-Intégration Home Assistant activement maintenue pour les centrales :
-
-- Somfy Protexial
-- Somfy Protexial IO
-- Somfy Protexiom
-
----
 
 [releases-shield]: https://img.shields.io/github/v/release/AuroreVgn/somfy-protexial-card?style=for-the-badge
 [releases]: https://github.com/AuroreVgn/somfy-protexial-card/releases
