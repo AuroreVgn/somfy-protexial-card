@@ -9,7 +9,7 @@
    Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const CARD_VERSION = "v2.1.2";
+const CARD_VERSION = "v2.2.1";
 
 const ALARM_FEATURES = {
   ARM_HOME: 1,
@@ -1156,7 +1156,7 @@ if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
 }
 
 /* Somfy Protexial Elements Card */
-const ELEMENTS_CARD_VERSION = "v2.1.2";
+const ELEMENTS_CARD_VERSION = "v1.4.8";
 
 const ELEMENTS_TRANSLATIONS = {
   fr: {
@@ -1357,6 +1357,10 @@ class SomfyProtexialElementsCard extends HTMLElement {
     this._entityRegistry = null;
     this._registryLoading = false;
     this._loadedDevice = null;
+
+    // Preserve collapsed/open sections across Home Assistant state updates.
+    this._collapsedGroups = new Set();
+    this._collapsedSubgroups = new Set();
   }
 
   static getConfigElement() {
@@ -1758,7 +1762,7 @@ class SomfyProtexialElementsCard extends HTMLElement {
     if (!entities.length) return "";
 
     return `
-      <div class="group" data-group="${category.key}">
+      <div class="group ${this._collapsedGroups.has(category.key) ? "collapsed" : ""}" data-group="${category.key}">
         <button type="button" class="group-title" data-toggle-group="${category.key}">
           <ha-icon icon="${category.icon}"></ha-icon>
           <span class="group-name">${et(this._hass, category.tkey)}</span>
@@ -1779,7 +1783,7 @@ class SomfyProtexialElementsCard extends HTMLElement {
     const main = ELEMENT_CATEGORIES.find(c => c.key === "technical");
 
     return `
-      <div class="group" data-group="technical">
+      <div class="group ${this._collapsedGroups.has("technical") ? "collapsed" : ""}" data-group="technical">
         <button type="button" class="group-title" data-toggle-group="technical">
           <ha-icon icon="${main.icon}"></ha-icon>
           <span class="group-name">${et(this._hass, main.tkey)}</span>
@@ -1793,7 +1797,7 @@ class SomfyProtexialElementsCard extends HTMLElement {
             if (!items.length) return "";
 
             return `
-              <div class="subgroup" data-subgroup="${sub.key}">
+              <div class="subgroup ${this._collapsedSubgroups.has(sub.key) ? "collapsed" : ""}" data-subgroup="${sub.key}">
                 <button type="button" class="subgroup-title" data-toggle-subgroup="${sub.key}">
                   <ha-icon icon="${sub.icon}"></ha-icon>
                   <span class="subgroup-name">${et(this._hass, sub.tkey)}</span>
@@ -1816,7 +1820,7 @@ class SomfyProtexialElementsCard extends HTMLElement {
     const elements = this._elements();
 
     if (this.config.device_id && !this._registryLoading) {
-      console.debug("[Somfy Protexial Elements Card v1.4.7]", {
+      console.debug("[Somfy Protexial Elements Card v1.4.8]", {
         device_id: this.config.device_id,
         registry_device_entities: this._deviceEntityIds(),
         detected_elements: elements.map(e => e.entity_id),
@@ -2068,16 +2072,36 @@ class SomfyProtexialElementsCard extends HTMLElement {
     this.shadowRoot.querySelectorAll("[data-toggle-group]").forEach(button => {
       button.addEventListener("click", event => {
         event.stopPropagation();
+
+        const key = button.dataset.toggleGroup;
         const group = button.closest(".group");
-        if (group) group.classList.toggle("collapsed");
+        if (!key || !group) return;
+
+        const collapsed = group.classList.toggle("collapsed");
+
+        if (collapsed) {
+          this._collapsedGroups.add(key);
+        } else {
+          this._collapsedGroups.delete(key);
+        }
       });
     });
 
     this.shadowRoot.querySelectorAll("[data-toggle-subgroup]").forEach(button => {
       button.addEventListener("click", event => {
         event.stopPropagation();
+
+        const key = button.dataset.toggleSubgroup;
         const subgroup = button.closest(".subgroup");
-        if (subgroup) subgroup.classList.toggle("collapsed");
+        if (!key || !subgroup) return;
+
+        const collapsed = subgroup.classList.toggle("collapsed");
+
+        if (collapsed) {
+          this._collapsedSubgroups.add(key);
+        } else {
+          this._collapsedSubgroups.delete(key);
+        }
       });
     });
 
