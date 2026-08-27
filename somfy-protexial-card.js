@@ -1156,7 +1156,7 @@ if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
 }
 
 /* Somfy Protexial Elements Card */
-const ELEMENTS_CARD_VERSION = "v1.4.8";
+const ELEMENTS_CARD_VERSION = "v2.1.2";
 
 const ELEMENTS_TRANSLATIONS = {
   fr: {
