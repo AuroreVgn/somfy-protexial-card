@@ -9,7 +9,7 @@
    Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const CARD_VERSION = "v2.2.0";
+const CARD_VERSION = "v2.2.1";
 
 const ALARM_FEATURES = {
   ARM_HOME: 1,
@@ -54,7 +54,7 @@ const TRANSLATIONS = {
     lastSync: "Dernière synchronisation", refresh: "Actualiser", refreshing: "Actualisation…", connected: "Centrale connectée",
     disconnected: "Centrale indisponible", codeTitle: "Code / PIN", codePlaceholder: "Saisir le code", cancel: "Annuler",
     validate: "Valider", confirm: "Confirmer", actionError: "Impossible d’exécuter l’action", clickDetails: "Cliquez pour les détails",
-    settingsDisplay: "Affichage avancé"
+    settingsDisplay: "Affichage avancé", keypadClear: "Effacer", keypadBackspace: "Retour"
   },
   en: {
     cardSettings: "Card settings", alarmEntity: "Alarm entity", cardTitle: "Card title", entity: "Entity",
@@ -72,7 +72,7 @@ const TRANSLATIONS = {
     noFaults: "No fault detected", lastSync: "Last synchronization", refresh: "Refresh", refreshing: "Refreshing…",
     connected: "Control panel connected", disconnected: "Control panel unavailable", codeTitle: "Code / PIN",
     codePlaceholder: "Enter code", cancel: "Cancel", validate: "Validate", confirm: "Confirm",
-    actionError: "Unable to execute action", clickDetails: "Click for details", settingsDisplay: "Advanced display"
+    actionError: "Unable to execute action", clickDetails: "Click for details", settingsDisplay: "Advanced display", keypadClear: "Clear", keypadBackspace: "Backspace"
   },
   de: {
     cardSettings:"Karteneinstellungen", alarmEntity:"Alarm-Entität", cardTitle:"Kartentitel", entity:"Entität", displayedName:"Angezeigter Name",
@@ -87,7 +87,7 @@ const TRANSLATIONS = {
     lastSyncEntity:"Entität letzte Synchronisierung", refreshEntity:"Aktualisierungsschaltfläche", faultsTitle:"Fehler",
     noFaults:"Keine Fehler erkannt", lastSync:"Letzte Synchronisierung", refresh:"Aktualisieren", refreshing:"Aktualisierung…",
     connected:"Zentrale verbunden", disconnected:"Zentrale nicht verfügbar", codeTitle:"Code / PIN", codePlaceholder:"Code eingeben",
-    cancel:"Abbrechen", validate:"Bestätigen", confirm:"Bestätigen", clickDetails:"Für Details klicken", settingsDisplay:"Erweiterte Anzeige",
+    cancel:"Abbrechen", validate:"Bestätigen", confirm:"Bestätigen", clickDetails:"Für Details klicken", settingsDisplay:"Erweiterte Anzeige", keypadClear:"Löschen", keypadBackspace:"Zurück",
     resetBatteryEntity:"Taste zum Zurücksetzen der Batteriefehler", resetAlarmEntity:"Taste zum Zurücksetzen der Alarmfehler",
     resetLinkEntity:"Taste zum Zurücksetzen der Funkverbindung"
   },
@@ -104,7 +104,7 @@ const TRANSLATIONS = {
     lastSyncEntity:"Entidad de última sincronización", refreshEntity:"Botón de actualización", faultsTitle:"Fallos",
     noFaults:"No se detectaron fallos", lastSync:"Última sincronización", refresh:"Actualizar", refreshing:"Actualizando…",
     connected:"Central conectada", disconnected:"Central no disponible", codeTitle:"Código / PIN", codePlaceholder:"Introducir código",
-    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Haz clic para ver detalles", settingsDisplay:"Visualización avanzada",
+    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Haz clic para ver detalles", settingsDisplay:"Visualización avanzada", keypadClear:"Borrar", keypadBackspace:"Atrás",
     resetBatteryEntity:"Botón de reinicio de pilas", resetAlarmEntity:"Botón de reinicio de alarma", resetLinkEntity:"Botón de reinicio del enlace de radio"
   },
   it: {
@@ -120,7 +120,7 @@ const TRANSLATIONS = {
     lastSyncEntity:"Entità ultima sincronizzazione", refreshEntity:"Pulsante aggiorna", faultsTitle:"Anomalie",
     noFaults:"Nessuna anomalia rilevata", lastSync:"Ultima sincronizzazione", refresh:"Aggiorna", refreshing:"Aggiornamento…",
     connected:"Centrale connessa", disconnected:"Centrale non disponibile", codeTitle:"Codice / PIN", codePlaceholder:"Inserisci codice",
-    cancel:"Annulla", validate:"Conferma", confirm:"Conferma", clickDetails:"Clicca per i dettagli", settingsDisplay:"Visualizzazione avanzata",
+    cancel:"Annulla", validate:"Conferma", confirm:"Conferma", clickDetails:"Clicca per i dettagli", settingsDisplay:"Visualizzazione avanzata", keypadClear:"Cancella", keypadBackspace:"Indietro",
     resetBatteryEntity:"Pulsante ripristino batterie", resetAlarmEntity:"Pulsante ripristino allarme", resetLinkEntity:"Pulsante ripristino collegamento radio"
   },
   nl: {
@@ -136,7 +136,7 @@ const TRANSLATIONS = {
     lastSyncEntity:"Entiteit laatste synchronisatie", refreshEntity:"Vernieuwknop", faultsTitle:"Storingen",
     noFaults:"Geen storing gedetecteerd", lastSync:"Laatste synchronisatie", refresh:"Vernieuwen", refreshing:"Vernieuwen…",
     connected:"Centrale verbonden", disconnected:"Centrale niet beschikbaar", codeTitle:"Code / PIN", codePlaceholder:"Voer code in",
-    cancel:"Annuleren", validate:"Bevestigen", confirm:"Bevestigen", clickDetails:"Klik voor details", settingsDisplay:"Geavanceerde weergave",
+    cancel:"Annuleren", validate:"Bevestigen", confirm:"Bevestigen", clickDetails:"Klik voor details", settingsDisplay:"Geavanceerde weergave", keypadClear:"Wissen", keypadBackspace:"Terug",
     resetBatteryEntity:"Knop batterijfouten resetten", resetAlarmEntity:"Knop alarmfouten resetten", resetLinkEntity:"Knop radioverbinding resetten"
   },
   pt: {
@@ -152,7 +152,7 @@ const TRANSLATIONS = {
     lastSyncEntity:"Entidade da última sincronização", refreshEntity:"Botão de atualização", faultsTitle:"Falhas",
     noFaults:"Nenhuma falha detetada", lastSync:"Última sincronização", refresh:"Atualizar", refreshing:"A atualizar…",
     connected:"Central ligada", disconnected:"Central indisponível", codeTitle:"Código / PIN", codePlaceholder:"Introduzir código",
-    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Clique para ver detalhes", settingsDisplay:"Visualização avançada",
+    cancel:"Cancelar", validate:"Validar", confirm:"Confirmar", clickDetails:"Clique para ver detalhes", settingsDisplay:"Visualização avançada", keypadClear:"Limpar", keypadBackspace:"Voltar",
     resetBatteryEntity:"Botão de reposição das pilhas", resetAlarmEntity:"Botão de reposição do alarme", resetLinkEntity:"Botão de reposição da ligação de rádio"
   }
 };
@@ -698,7 +698,70 @@ class SomfyProtexialCard extends HTMLElement {
         .modal { width:min(380px, 100%); background:var(--ha-card-background, var(--card-background-color)); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.35); padding:20px; color:var(--primary-text-color); }
         .modal-title { font-size:18px; font-weight:700; margin-bottom:10px; }
         .modal-message { font-size:14px; color:var(--secondary-text-color); margin-bottom:14px; }
-        .modal input { width:100%; box-sizing:border-box; padding:12px; border:1px solid var(--divider-color); border-radius:8px; background:var(--primary-background-color); color:var(--primary-text-color); font-size:16px; }
+        .pin-entry { display:none; }
+        .pin-entry.open { display:block; }
+
+        .pin-display {
+          min-height:50px;
+          box-sizing:border-box;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding:10px 14px;
+          margin-bottom:14px;
+          border:1px solid var(--divider-color);
+          border-radius:10px;
+          background:var(--primary-background-color);
+          color:var(--primary-text-color);
+          font-size:24px;
+          font-weight:700;
+          letter-spacing:7px;
+          outline:none;
+          user-select:none;
+        }
+        .pin-display:focus {
+          border-color:var(--primary-color);
+          box-shadow:0 0 0 1px var(--primary-color);
+        }
+        .pin-placeholder {
+          color:var(--secondary-text-color);
+          font-size:13px;
+          font-weight:400;
+          letter-spacing:0;
+        }
+
+        .pin-keypad {
+          display:grid;
+          grid-template-columns:repeat(3, minmax(0, 1fr));
+          gap:9px;
+        }
+        .pin-key {
+          height:52px;
+          border:1px solid var(--divider-color);
+          border-radius:12px;
+          background:var(--secondary-background-color);
+          color:var(--primary-text-color);
+          font:600 20px var(--primary-font-family, sans-serif);
+          cursor:pointer;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          transition:background .15s ease, transform .08s ease;
+          -webkit-tap-highlight-color:transparent;
+        }
+        .pin-key:hover {
+          background:color-mix(in srgb, var(--primary-color) 8%, var(--secondary-background-color));
+        }
+        .pin-key:active {
+          transform:scale(.96);
+        }
+        .pin-key-action {
+          color:var(--secondary-text-color);
+        }
+        .pin-key-action ha-icon {
+          --mdc-icon-size:22px;
+        }
+
         .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
         .modal-actions button { min-height:36px; border-radius:8px; padding:0 14px; border:0; cursor:pointer; font-weight:600; }
         .secondary { background:var(--secondary-background-color); color:var(--primary-text-color); }
@@ -773,7 +836,43 @@ class SomfyProtexialCard extends HTMLElement {
         <div class="modal">
           <div class="modal-title" id="modal-title"></div>
           <div class="modal-message" id="modal-message"></div>
-          <input id="modal-input" type="password" autocomplete="current-password">
+
+          <div class="pin-entry" id="pin-entry">
+            <div
+              class="pin-display"
+              id="pin-display"
+              tabindex="0"
+              role="textbox"
+              aria-label="${tr(this._hass, "codeTitle")}"
+              aria-readonly="true">
+              <span class="pin-placeholder">${tr(this._hass, "codePlaceholder")}</span>
+            </div>
+
+            <div class="pin-keypad" id="pin-keypad">
+              ${[1,2,3,4,5,6,7,8,9].map(number => `
+                <button type="button" class="pin-key" data-pin-key="${number}">${number}</button>
+              `).join("")}
+
+              <button
+                type="button"
+                class="pin-key pin-key-action"
+                data-pin-clear
+                title="${tr(this._hass, "keypadClear")}">
+                <ha-icon icon="mdi:close-circle-outline"></ha-icon>
+              </button>
+
+              <button type="button" class="pin-key" data-pin-key="0">0</button>
+
+              <button
+                type="button"
+                class="pin-key pin-key-action"
+                data-pin-backspace
+                title="${tr(this._hass, "keypadBackspace")}">
+                <ha-icon icon="mdi:backspace-outline"></ha-icon>
+              </button>
+            </div>
+          </div>
+
           <div class="modal-actions">
             <button class="secondary" data-modal-cancel>${tr(this._hass, "cancel")}</button>
             <button class="primary" data-modal-confirm>${tr(this._hass, "confirm")}</button>
@@ -802,34 +901,149 @@ class SomfyProtexialCard extends HTMLElement {
       const modal = this.shadowRoot.getElementById("modal");
       const titleEl = this.shadowRoot.getElementById("modal-title");
       const messageEl = this.shadowRoot.getElementById("modal-message");
-      const inputEl = this.shadowRoot.getElementById("modal-input");
+      const pinEntry = this.shadowRoot.getElementById("pin-entry");
+      const pinDisplay = this.shadowRoot.getElementById("pin-display");
       const confirmBtn = modal.querySelector("[data-modal-confirm]");
       const cancelBtn = modal.querySelector("[data-modal-cancel]");
+
+      let pinValue = "";
+
       titleEl.textContent = title;
       messageEl.textContent = message;
       messageEl.style.display = message ? "" : "none";
-      inputEl.style.display = input ? "" : "none";
-      inputEl.placeholder = inputPlaceholder;
-      inputEl.value = "";
+      pinEntry.classList.toggle("open", input);
       confirmBtn.textContent = confirmText || tr(this._hass, "confirm");
-      modal.classList.add("open");
+
+      const updatePinDisplay = () => {
+        if (!input) return;
+
+        if (!pinValue.length) {
+          pinDisplay.innerHTML = `<span class="pin-placeholder">${inputPlaceholder || tr(this._hass, "codePlaceholder")}</span>`;
+          confirmBtn.disabled = true;
+        } else {
+          pinDisplay.textContent = "•".repeat(pinValue.length);
+          confirmBtn.disabled = false;
+        }
+      };
+
+      const appendDigit = digit => {
+        if (!input || !/^\d$/.test(String(digit))) return;
+
+        // Somfy PINs are normally short. Keep a generous upper limit
+        // so the card remains compatible with other alarm panels.
+        if (pinValue.length >= 12) return;
+
+        pinValue += String(digit);
+        updatePinDisplay();
+      };
+
+      const backspace = () => {
+        if (!input || !pinValue.length) return;
+        pinValue = pinValue.slice(0, -1);
+        updatePinDisplay();
+      };
+
+      const clearPin = () => {
+        if (!input) return;
+        pinValue = "";
+        updatePinDisplay();
+      };
 
       const close = result => {
         modal.classList.remove("open");
+
         confirmBtn.onclick = null;
         cancelBtn.onclick = null;
         modal.onclick = null;
-        inputEl.onkeydown = null;
+        pinDisplay.onkeydown = null;
+
+        modal.querySelectorAll("[data-pin-key]").forEach(button => {
+          button.onclick = null;
+        });
+
+        const clearButton = modal.querySelector("[data-pin-clear]");
+        const backspaceButton = modal.querySelector("[data-pin-backspace]");
+        if (clearButton) clearButton.onclick = null;
+        if (backspaceButton) backspaceButton.onclick = null;
+
+        pinValue = "";
+        updatePinDisplay();
         resolve(result);
       };
-      confirmBtn.onclick = () => close(input ? inputEl.value : true);
-      cancelBtn.onclick = () => close(null);
-      modal.onclick = event => { if (event.target === modal) close(null); };
-      inputEl.onkeydown = event => {
-        if (event.key === "Enter") close(inputEl.value);
-        if (event.key === "Escape") close(null);
+
+      modal.querySelectorAll("[data-pin-key]").forEach(button => {
+        button.onclick = event => {
+          event.preventDefault();
+          appendDigit(button.dataset.pinKey);
+        };
+      });
+
+      const clearButton = modal.querySelector("[data-pin-clear]");
+      if (clearButton) {
+        clearButton.onclick = event => {
+          event.preventDefault();
+          clearPin();
+        };
+      }
+
+      const backspaceButton = modal.querySelector("[data-pin-backspace]");
+      if (backspaceButton) {
+        backspaceButton.onclick = event => {
+          event.preventDefault();
+          backspace();
+        };
+      }
+
+      confirmBtn.onclick = () => {
+        if (input && !pinValue.length) return;
+        close(input ? pinValue : true);
       };
-      if (input) requestAnimationFrame(() => inputEl.focus());
+
+      cancelBtn.onclick = () => close(null);
+
+      modal.onclick = event => {
+        if (event.target === modal) close(null);
+      };
+
+      pinDisplay.onkeydown = event => {
+        if (!input) return;
+
+        if (/^\d$/.test(event.key)) {
+          event.preventDefault();
+          appendDigit(event.key);
+          return;
+        }
+
+        if (event.key === "Backspace") {
+          event.preventDefault();
+          backspace();
+          return;
+        }
+
+        if (event.key === "Delete") {
+          event.preventDefault();
+          clearPin();
+          return;
+        }
+
+        if (event.key === "Enter" && pinValue.length) {
+          event.preventDefault();
+          close(pinValue);
+          return;
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          close(null);
+        }
+      };
+
+      updatePinDisplay();
+      modal.classList.add("open");
+
+      if (input) {
+        requestAnimationFrame(() => pinDisplay.focus());
+      }
     });
   }
 
