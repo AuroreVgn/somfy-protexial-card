@@ -1155,7 +1155,6 @@ if (!window.customCards.some(card => card.type === "somfy-protexial-card")) {
   });
 }
 
-/* Somfy Protexial Elements Card */
 /* ========================================================
    Somfy Protexial / Protexiom Card - Elements
    ======================================================== */
