@@ -1796,31 +1796,96 @@ class SomfyProtexialElementsCard extends HTMLElement {
   _human(value) {
     const v = String(value ?? "");
     const n = v.toLowerCase();
-    const fr = {
-      ok: "OK",
-      low: "Faible",
-      connected: "Connectée",
-      disconnected: "Déconnectée",
-      "domestic fault/intrusion": "Défaut / intrusion",
-      "open/ripped off": "Ouvert / arraché",
-      closed: "Fermée",
-      open: "Ouverte",
-      running: "Actif",
-      paused: "En pause",
+
+    const values = {
+      fr: {
+        ok: "OK",
+        low: "Faible",
+        connected: "Connectée",
+        disconnected: "Déconnectée",
+        "domestic fault/intrusion": "Défaut / intrusion",
+        "open/ripped off": "Ouvert / arraché",
+        closed: "Fermée",
+        open: "Ouverte",
+        running: "Actif",
+        paused: "En pause",
+      },
+      en: {
+        ok: "OK",
+        low: "Low",
+        connected: "Connected",
+        disconnected: "Disconnected",
+        "domestic fault/intrusion": "Fault / intrusion",
+        "open/ripped off": "Open / ripped off",
+        closed: "Closed",
+        open: "Open",
+        running: "Active",
+        paused: "Paused",
+      },
+      de: {
+        ok: "OK",
+        low: "Schwach",
+        connected: "Verbunden",
+        disconnected: "Getrennt",
+        "domestic fault/intrusion": "Fehler / Einbruch",
+        "open/ripped off": "Offen / abgerissen",
+        closed: "Geschlossen",
+        open: "Offen",
+        running: "Aktiv",
+        paused: "Pausiert",
+      },
+      es: {
+        ok: "OK",
+        low: "Baja",
+        connected: "Conectado",
+        disconnected: "Desconectado",
+        "domestic fault/intrusion": "Fallo / intrusión",
+        "open/ripped off": "Abierto / arrancado",
+        closed: "Cerrado",
+        open: "Abierto",
+        running: "Activo",
+        paused: "En pausa",
+      },
+      it: {
+        ok: "OK",
+        low: "Bassa",
+        connected: "Connesso",
+        disconnected: "Disconnesso",
+        "domestic fault/intrusion": "Anomalia / intrusione",
+        "open/ripped off": "Aperto / strappato",
+        closed: "Chiuso",
+        open: "Aperto",
+        running: "Attivo",
+        paused: "In pausa",
+      },
+      nl: {
+        ok: "OK",
+        low: "Laag",
+        connected: "Verbonden",
+        disconnected: "Niet verbonden",
+        "domestic fault/intrusion": "Storing / inbraak",
+        "open/ripped off": "Open / losgetrokken",
+        closed: "Gesloten",
+        open: "Open",
+        running: "Actief",
+        paused: "Gepauzeerd",
+      },
+      pt: {
+        ok: "OK",
+        low: "Fraca",
+        connected: "Ligado",
+        disconnected: "Desligado",
+        "domestic fault/intrusion": "Falha / intrusão",
+        "open/ripped off": "Aberto / arrancado",
+        closed: "Fechado",
+        open: "Aberto",
+        running: "Ativo",
+        paused: "Em pausa",
+      },
     };
-    const en = {
-      ok: "OK",
-      low: "Low",
-      connected: "Connected",
-      disconnected: "Disconnected",
-      "domestic fault/intrusion": "Fault / intrusion",
-      "open/ripped off": "Open / ripped off",
-      closed: "Closed",
-      open: "Open",
-      running: "Active",
-      paused: "Paused",
-    };
-    return (this._lang() === "fr" ? fr : en)[n] || v;
+
+    const lang = this._lang();
+    return values[lang]?.[n] ?? values.en[n] ?? v;
   }
 
   _ok(def, value) {
