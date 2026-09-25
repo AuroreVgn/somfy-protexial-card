@@ -1,6 +1,10 @@
-[![GitHub Release][releases-shield]][releases]
+[![PayPal](https://img.shields.io/badge/paypal-me-blue.svg?style=for-the-badge&color=purple&logo=paypal&logoColor=ccc&link=https%3A%2F%2Fpaypal.me%2hlaissus/5)](https://paypal.me/hlaissus/5)
+[![GitHub Release]( https://img.shields.io/github/v/release/developpeurbox/somfy-protexial-card?style=for-the-badge)](https://github.com/developpeurbox/somfy-protexial-card/releases)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
-[![Community Forum][forum-shield]][forum]
+[![Community Forum]( https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge)](https://community.home-assistant.io)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://github.com/developpeurbox/somfy-protexial-card/blob/main/LICENSE)
+
+[![HACS Action](https://github.com/developpeurbox/somfy-protexial-card/actions/workflows/hacs.yml/badge.svg?style=for-the-badge)](https://github.com/developpeurbox/somfy-protexial-card/actions/workflows/hacs.yml)  
 
 # 🇬🇧 🇩🇪 🇪🇸 🇮🇹 🇳🇱 🇵🇹 Multi-languages support
 
@@ -538,10 +542,3 @@ Les deux cartes prennent actuellement en charge :
 - 🇵🇹 Português
 
 La langue est déterminée automatiquement à partir des paramètres Home Assistant / navigateur.
-
-[releases-shield]: https://img.shields.io/github/v/release/AuroreVgn/somfy-protexial-card?style=for-the-badge
-[releases]: https://github.com/AuroreVgn/somfy-protexial-card/releases
-[hacs-badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
-[hacs]: https://github.com/hacs/integration
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
