@@ -23,8 +23,9 @@ jobs:
       - name: Lire la version dans le fichier JS
         id: version
         run: |
-          VERSION=$(grep -oP 'CARD_VERSION = "v\K[0-9.]+' somfy-protexial-card.js)
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          VERSION=$(grep -oP 'CARD_VERSION = "v\K[0-9.]+' somfy-protexial-card.js | head -n 1)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        shell: /usr/bin/bash -e {0}
 
       - name: Vérifier que le tag n'existe pas déjà
         id: check
