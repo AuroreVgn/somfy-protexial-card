@@ -9,7 +9,7 @@
    Somfy Protexial / Protexiom Card
    ======================================================== */
 
-const NMC_VERSION = "v2.1.5";
+const CARD_VERSION= "v2.1.5";
 
 const ALARM_FEATURES = {
   ARM_HOME: 1,
