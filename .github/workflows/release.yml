@@ -1,7 +1,7 @@
 name: Release
 
-# Se déclenche uniquement quand footao-game-card.js change sur main (donc
-# quand tu bumps  NMC_VERSION . "Run workflow" dispo aussi.
+# Se déclenche uniquement quand somfy-protexial-card.js change sur main
+# (donc quand tu bumps CARD_VERSION). "Run workflow" dispo aussi.
 on:
   push:
     branches: [main]
@@ -23,7 +23,11 @@ jobs:
       - name: Lire la version dans le fichier JS
         id: version
         run: |
-          VERSION=$(grep -oP 'CARD_VERSION = "v\K[0-9.]+' somfy-protexial-card.js)
+          VERSION=$(grep -oP '(?<![A-Za-z0-9_])CARD_VERSION\s*=\s*"v\K[0-9.]+' somfy-protexial-card.js | head -n1)
+          if [ -z "$VERSION" ]; then
+            echo "Version introuvable dans somfy-protexial-card.js"
+            exit 1
+          fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Vérifier que le tag n'existe pas déjà
