@@ -2046,11 +2046,6 @@ class SomfyProtexialElementsCard extends HTMLElement {
     const icon = attrs.icon ||
       (problem ? "mdi:alert-circle-outline" : "mdi:check-circle-outline");
 
-    const isCentral = this._technicalSubcategory(entity) === "control" &&
-      (String(attrs.Zone || "").toUpperCase() === "SYS" ||
-        /centrale|central|transmetteur|transmitter/i.test(
-          `${entity.entity_id} ${attrs.friendly_name || ""}`
-        ));
     const pauseSwitch = isCentral ? null : this._pauseSwitchForElement(entity);
     const active = pauseSwitch?.state === "on";
     const paused = pauseSwitch?.state === "off";
