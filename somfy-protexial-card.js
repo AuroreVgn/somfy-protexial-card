@@ -2046,6 +2046,12 @@ class SomfyProtexialElementsCard extends HTMLElement {
     const icon = attrs.icon ||
       (problem ? "mdi:alert-circle-outline" : "mdi:check-circle-outline");
 
+    const isCentral = this._technicalSubcategory(entity) === "control" &&
+      (String(attrs.Zone || "").toUpperCase() === "SYS" ||
+        /centrale|central|transmetteur|transmitter/i.test(
+          `${entity.entity_id} ${attrs.friendly_name || ""}`
+        ));
+    const memoryButtons = isCentral ? this._memoryButtons() : null;
     const pauseSwitch = isCentral ? null : this._pauseSwitchForElement(entity);
     const active = pauseSwitch?.state === "on";
     const paused = pauseSwitch?.state === "off";
@@ -2063,6 +2069,20 @@ class SomfyProtexialElementsCard extends HTMLElement {
           <div class="summary ${problem ? "problem" : "ok"}">
             ${this._stateLabel(entity)}
           </div>
+          ${memoryButtons?.open ? `
+            <button type="button" class="pause-button active"
+              data-memory-button="${memoryButtons.open.entity_id}"
+              title="Ouverture mémoire">
+              <ha-icon icon="mdi:lock-open-outline"></ha-icon>
+              <span>Ouverture mémoire</span>
+            </button>` : ""}
+          ${memoryButtons?.close ? `
+            <button type="button" class="pause-button active"
+              data-memory-button="${memoryButtons.close.entity_id}"
+              title="Fermeture mémoire">
+              <ha-icon icon="mdi:lock-outline"></ha-icon>
+              <span>Fermeture mémoire</span>
+            </button>` : ""}
           ${pauseSwitch ? `
             <button
               type="button"
@@ -2345,15 +2365,6 @@ class SomfyProtexialElementsCard extends HTMLElement {
         .summary { font-size:11px; font-weight:650; white-space:nowrap; }
         .summary.ok { color:#22c55e; } .summary.problem { color:#ef4444; }
 
-        .memory-actions { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-        .memory-actions .pause-button { min-height:32px; font-size:11px; }
-        .memory-actions .memory-open { color:var(--success-color,#43a047); }
-        .memory-actions .memory-close { color:var(--primary-text-color); }
-        @media (max-width:600px) {
-          .header { flex-wrap:wrap; }
-          .memory-actions { order:3; width:100%; }
-          .memory-actions .pause-button { flex:1; min-width:0; }
-        }
         .pause-button {
           min-height:30px;
           padding:0 9px;
@@ -2401,22 +2412,6 @@ class SomfyProtexialElementsCard extends HTMLElement {
       <ha-card>
         <div class="header">
           <div class="title">${title}</div>
-          ${(() => {
-            const memory = this._memoryButtons();
-            if (!memory.open && !memory.close) return "";
-            return `<div class="memory-actions">
-              ${memory.open ? `<button type="button" class="pause-button memory-open"
-                data-memory-button="${memory.open.entity_id}" title="Ouvrir l'appairage"
-                aria-label="Ouvrir l'appairage">
-                <ha-icon icon="mdi:lock-open-outline"></ha-icon><span>Ouvrir l'appairage</span>
-              </button>` : ""}
-              ${memory.close ? `<button type="button" class="pause-button memory-close"
-                data-memory-button="${memory.close.entity_id}" title="Fermer l'appairage"
-                aria-label="Fermer l'appairage">
-                <ha-icon icon="mdi:lock-outline"></ha-icon><span>Fermer l'appairage</span>
-              </button>` : ""}
-            </div>`;
-          })()}
           <div class="header-stats">
             <div class="stat" title="${et(this._hass, "total")}">
               <ha-icon icon="mdi:devices"></ha-icon>
